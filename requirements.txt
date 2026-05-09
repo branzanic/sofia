@@ -1,0 +1,20 @@
+# Sofia — runtime dependencies
+#
+# Core (always required for analysis):
+numpy>=1.20
+
+# Optional — only needed for the --plot flag (per-file PNG figures and
+# cross-dataset summary plots). Sofia's analysis + CSV output runs without it.
+matplotlib>=3.4
+
+# Optional — only needed for the `viz` subcommand to render the .pml scripts
+# Sofia generates (the porphyrin / corrin / corphin minimal-basis grids).
+# PyMOL is NOT a pip-installable Python package in the usual sense; install
+# it separately:
+#
+#   macOS (Homebrew):   brew install --cask pymol
+#   Linux (apt):        sudo apt-get install pymol
+#   Conda (any OS):     conda install -c conda-forge pymol-open-source
+#
+# Sofia generates the .pdb + .pml bundles whether or not PyMOL is on PATH;
+# you only need PyMOL to actually open / render the result.

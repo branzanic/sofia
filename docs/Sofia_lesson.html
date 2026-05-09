@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sofia — an NSD lesson</title>
+<style>
+  :root {
+    --fg: #1a1a1a;
+    --muted: #666;
+    --accent: #1a5490;
+    --accent-soft: #e8f0f8;
+    --border: #d8d8d8;
+    --code-bg: #f5f5f5;
+    --max: 760px;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 17px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: var(--fg);
+    line-height: 1.65;
+    margin: 0;
+    padding: 0;
+    background: #fafafa;
+  }
+  main {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 3em 1.4em 6em;
+    background: white;
+    box-shadow: 0 0 40px rgba(0,0,0,0.04);
+  }
+  header {
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 1.2em;
+    margin-bottom: 2em;
+  }
+  h1 {
+    font-size: 2.4em;
+    font-weight: 600;
+    margin: 0 0 .15em;
+    letter-spacing: -.01em;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 1.1em;
+    margin: 0;
+  }
+  h2 {
+    font-size: 1.6em;
+    margin-top: 2.2em;
+    margin-bottom: .6em;
+    padding-bottom: .2em;
+    border-bottom: 1px solid var(--border);
+    color: var(--accent);
+  }
+  h3 {
+    font-size: 1.2em;
+    margin-top: 1.6em;
+    margin-bottom: .4em;
+  }
+  p { margin: .6em 0; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  code {
+    font-family: "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: .92em;
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  pre {
+    background: var(--code-bg);
+    border-left: 3px solid var(--accent);
+    padding: .8em 1em;
+    overflow-x: auto;
+    line-height: 1.4;
+    font-size: .88em;
+    border-radius: 0 4px 4px 0;
+  }
+  pre code { background: none; padding: 0; }
+
+  figure {
+    margin: 1.6em 0;
+    text-align: center;
+  }
+  figure img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: white;
+  }
+  figcaption {
+    color: var(--muted);
+    font-size: .92em;
+    margin-top: .6em;
+    text-align: left;
+    padding: 0 .5em;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+    font-size: .94em;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: .5em .8em;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--accent-soft); font-weight: 600; }
+
+  .toc {
+    background: var(--accent-soft);
+    border-radius: 6px;
+    padding: 1em 1.6em;
+    margin: 1.6em 0;
+  }
+  .toc h2 {
+    border: none;
+    margin: 0 0 .4em;
+    font-size: 1em;
+    color: var(--fg);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .toc ol { margin: 0; padding-left: 1.4em; }
+  .toc li { margin: .2em 0; line-height: 1.4; }
+
+  .callout {
+    background: #fff8e0;
+    border-left: 3px solid #d4a410;
+    padding: .8em 1.1em;
+    margin: 1em 0;
+    border-radius: 0 4px 4px 0;
+    font-size: .95em;
+  }
+  .callout strong { color: #8a6800; }
+
+  .math {
+    font-family: "Cambria Math", Cambria, Georgia, serif;
+    font-style: italic;
+  }
+  .irrep {
+    font-family: "Cambria Math", Cambria, Georgia, serif;
+    font-style: italic;
+    white-space: nowrap;
+  }
+
+  footer {
+    margin-top: 4em;
+    padding-top: 1.2em;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: .9em;
+  }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <h1>Sofia</h1>
+  <p class="subtitle">An NSD lesson — what Sofia decomposes, and why it matters</p>
+</header>
+
+<p>
+  Open any crystal structure of a metalloporphyrin, and you'll see the same
+  thing: the macrocyclic ring is never quite flat. It saddles, it ruffles, it
+  domes. The metal sits a hair above the mean plane. Two opposite pyrroles
+  squeeze closer together than the other two. These distortions look chaotic
+  if you stare at one structure, but they are not random — they are the
+  fingerprints of how the metal, the spin state, the axial ligands, and
+  the protein matrix all push and pull on a delicate, conjugated π system.
+</p>
+
+<p>
+  <strong>Normal-coordinate Structural Decomposition</strong> (NSD), formalised
+  by Jentzen, Song and Shelnutt in 1997, is the trick for reading those
+  fingerprints. Project the observed distortion onto the lowest-frequency
+  normal modes of the idealised D<sub>4h</sub> macrocycle, and you get a small
+  set of signed numbers — sad, ruf, dom, wave, propeller — that tell you
+  <em>which</em> distortions matter and <em>by how much</em>.
+</p>
+
+<p>
+  <strong>Sofia</strong> is the open implementation of NSD that we use for our
+  metallo-porphyrin, metallo-corrin, and F430 work. It reads Gaussian opt
+  logs and ORCA QM/MM output, walks the graph to find the inner ring (no
+  user-supplied atom indices), fits the mean plane, projects the
+  displacements onto an analytic D<sub>4h</sub>-pattern minimal basis, and
+  spits out per-file reports, CSV summaries, and PyMOL visualizations of
+  what each mode actually looks like.
+</p>
+
+<p>
+  This page is a working tutorial. Read top to bottom and you should come away
+  knowing what Sofia does, what its outputs mean, and how to use it on your
+  own data.
+</p>
+
+<div class="callout">
+  <strong>New to group theory?</strong> The labels A<sub>2u</sub>,
+  B<sub>1u</sub>, E<sub>g</sub> and so on come from the irreducible
+  representations of the D<sub>4h</sub> point group. If those symbols
+  feel like hieroglyphics, read the prerequisite primer first:
+  <a href="group_theory_lesson.html">Group theory for Sofia</a>. It covers
+  exactly enough to make the rest of this page transparent.
+</div>
+
+<nav class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#what-is-nsd">What is NSD?</a></li>
+    <li><a href="#macrocycles">The macrocycles Sofia handles</a></li>
+    <li><a href="#minimal-basis">The minimal basis — what each mode looks like</a></li>
+    <li><a href="#pipeline">Inside Sofia: the analysis pipeline</a></li>
+    <li><a href="#using-sofia">Using Sofia</a></li>
+    <li><a href="#output">Reading the output</a></li>
+    <li><a href="#viz">The PyMOL visualization bundle</a></li>
+    <li><a href="#caveats">Caveats and limitations</a></li>
+    <li><a href="#further">Further reading</a></li>
+  </ol>
+</nav>
+
+
+<h2 id="what-is-nsd">1. What is NSD?</h2>
+
+<p>
+  Take a metalloporphyrin. Forget the metal for a moment, forget the axial
+  ligands, and imagine the bare 24-atom inner ring (4 pyrrole nitrogens, 8
+  α-carbons bonded to them, 4 meso carbons bridging the pyrroles, 8
+  β-carbons making up the pyrrole backs). In its idealised geometry, this
+  ring has D<sub>4h</sub> symmetry — a four-fold rotation axis through the
+  metal, two mirror planes (one through opposite N's, one through opposite
+  meso C's), a horizontal mirror plane.
+</p>
+
+<p>
+  Group theory tells you the normal vibrational modes of any D<sub>4h</sub>
+  system fall into a fixed set of <em>irreducible representations</em>
+  (irreps): A<sub>1g</sub>, A<sub>2g</sub>, B<sub>1g</sub>, B<sub>2g</sub>,
+  E<sub>g</sub>, A<sub>1u</sub>, A<sub>2u</sub>, B<sub>1u</sub>,
+  B<sub>2u</sub>, E<sub>u</sub>. Each irrep corresponds to a specific
+  symmetry behaviour. A<sub>2u</sub>, for example, changes sign under the
+  horizontal mirror — atoms above the plane move up, atoms below move down,
+  but the four-fold axis is preserved. That's <em>doming</em>.
+</p>
+
+<p>
+  Jentzen, Song and Shelnutt's insight was that you don't need every normal
+  mode to describe the distortion of a real porphyrin — just the
+  <em>lowest-frequency</em> one in each symmetry channel. Six modes cover
+  out-of-plane distortion (one each from A<sub>2u</sub>, B<sub>1u</sub>,
+  B<sub>2u</sub>, A<sub>1u</sub>, plus the two-component E<sub>g</sub>
+  pair); six more cover in-plane distortion. Project the observed
+  Δz<sub>i</sub> and (Δx<sub>i</sub>, Δy<sub>i</sub>) of the 24 inner-ring
+  atoms onto these twelve modes, and you've reduced a 72-component
+  displacement vector to a fingerprint of twelve signed amplitudes.
+</p>
+
+<div class="callout">
+  <strong>Why the minimal basis?</strong> Real macrocycles distort along
+  many normal modes at once, but for the lowest-frequency irrep
+  representative the displacement pattern is essentially the same as for
+  higher-frequency modes of the same irrep — it's the lowest-order
+  polynomial generator of that symmetry. So projecting onto just the lowest
+  one captures most of what's chemically interesting, and the residual
+  ("higher-mode contributions") is small.
+</div>
+
+<h3>An analogy: NSD is to geometry as SALC analysis is to electron density</h3>
+
+<p>
+  If you've done LCAO molecular-orbital theory, the structure of NSD will
+  feel familiar. There you write a molecular orbital as a weighted sum of
+  symmetry-adapted linear combinations of atomic orbitals (SALCs):
+  ψ<sub>MO</sub> = Σ<sub>Γ</sub> c<sub>Γ</sub> · SALC<sub>Γ</sub>, and the
+  signed coefficients c<sub>Γ</sub> tell you how much each irrep contributes
+  to the orbital. NSD does the same thing for geometry: write the observed
+  distortion as Δr = Σ<sub>Γ</sub> d<sub>Γ</sub> · B<sub>Γ</sub>, where the
+  B<sub>Γ</sub> are symmetry-adapted distortion templates and the signed
+  amplitudes d<sub>Γ</sub> tell you how much each irrep contributes to the
+  shape. The mathematical machinery is identical — orthogonal projection
+  onto a symmetry-classified basis — only the object being decomposed is
+  different (an electronic wavefunction in MO theory, a 72-component
+  displacement vector here).
+</p>
+
+<p>
+  The pedagogical pay-off is the same in both cases: a high-dimensional
+  object reduces to a small set of symmetry-channel weights you can
+  compare across systems. <em>"This porphyrin is 60 % saddled, 30 %
+  ruffled"</em> is the same kind of statement as <em>"this MO is 70 %
+  N 2p<sub>z</sub> SALC, 20 % C<sub>α</sub> p<sub>z</sub> SALC"</em>.
+</p>
+
+<p>
+  Two places where the analogy doesn't quite map:
+</p>
+
+<ul>
+  <li>
+    MOs are <em>eigenvectors</em> of the Fock / Kohn-Sham operator —
+    they're physically distinguished by the underlying quantum mechanics.
+    Sofia's minimal-basis modes are <em>analytic templates</em> (lowest-order
+    polynomial generators of each irrep), chosen for interpretability.
+    The closer eigenvalue analogue is the molecular Hessian and its
+    normal modes; that is what Sofia's
+    <code>corrin-freq</code> module (Variant iii) uses when you want a
+    basis-rigorous decomposition for a non-D<sub>4h</sub> macrocycle.
+  </li>
+  <li>
+    LCAO reconstruction is exact within its basis (a complete change of
+    basis); NSD's minimal basis is intentionally truncated to one
+    representative per irrep, so a residual is built in by design. The
+    fraction-explained number Sofia reports tells you how much of the
+    distortion the minimal basis captures — analogous, in spirit, to a
+    "basis completeness" check.
+  </li>
+</ul>
+
+
+<h2 id="macrocycles">2. The macrocycles Sofia handles</h2>
+
+<p>
+  Sofia covers four macrocycle classes, distinguished by their inner-ring
+  topology:
+</p>
+
+<table>
+<tr><th>Class</th><th>Inner ring</th><th>Symmetry</th><th>Examples</th></tr>
+<tr>
+  <td><strong>Porphyrin</strong></td>
+  <td>24 atoms (4 N + 8 Cα + 4 Cmeso + 8 Cβ)</td>
+  <td>D<sub>4h</sub> idealised</td>
+  <td>metalloporphine, tetrahydroporphyrin, 1HBM-style amide-substituted probes</td>
+</tr>
+<tr>
+  <td><strong>Corphin / F430</strong></td>
+  <td>24 atoms (same topology as porphyrin)</td>
+  <td>not D<sub>4h</sub> — saturation of pyrroles + fused F-ring break it</td>
+  <td>F430 cofactor of methyl-coenzyme M reductase</td>
+</tr>
+<tr>
+  <td><strong>Corrin</strong></td>
+  <td>23 atoms (4 N + 8 Cα + <strong>3</strong> Cmeso + 8 Cβ)</td>
+  <td>C<sub>1</sub> — only 3 mesos; one Cα–Cα direct bond closes the ring</td>
+  <td>vitamin B<sub>12</sub> / cobalamin, di-OH metallocorrins</td>
+</tr>
+<tr>
+  <td><strong>F430 in QM/MM</strong></td>
+  <td>same 24-atom corphin ring, embedded in MCR enzyme</td>
+  <td>same as corphin</td>
+  <td>F430 in the active site of methyl-coenzyme M reductase</td>
+</tr>
+</table>
+
+<p>
+  Why does Sofia identify the inner ring by graph topology rather than from
+  user-supplied indices? Because in real datasets — full cobalamin with
+  axial dimethylbenzimidazole, F430 with all the propionamide tails,
+  arbitrary substitution patterns from a manuscript — the inner ring is
+  embedded in a much larger molecule, and its atom ordering varies file by
+  file. The graph walk (find the metal, find the four pyrrole N's bonded
+  to it via the 5-ring N–Cα–Cβ–Cβ–Cα–N closure, find the Cmeso bridges)
+  is robust to all of that.
+</p>
+
+<p>
+  For corrin specifically, the closure is different: instead of four Cmeso
+  bridges between the pyrroles, there are only three — and one direct
+  Cα–Cα bond (the "direct link"). Sofia finds this bond explicitly and
+  uses it to identify the corrin ring, distinguishing it from porphyrin.
+</p>
+
+
+<h2 id="minimal-basis">3. The minimal basis — what each mode looks like</h2>
+
+<p>
+  Twelve signed amplitudes is a compact summary, but most people don't have
+  an intuitive picture of what a B<sub>1u</sub> displacement
+  <em>looks like</em>. Sofia ships a generator that builds a visualization
+  bundle for each macrocycle: a planar reference plus one distorted variant
+  per mode, rendered side by side.
+</p>
+
+<h3>Out-of-plane modes (Δz)</h3>
+
+<p>
+  Six basis modes cover the OOP distortion. The first four are non-degenerate
+  (single-component) irreps; the fifth is the two-component
+  E<sub>g</sub> pair (we render <span class="irrep">wav_x</span> and
+  <span class="irrep">wav_y</span> separately).
+</p>
+
+<table>
+<tr><th>Mode</th><th>Irrep</th><th>Pattern</th><th>Geometric meaning</th></tr>
+<tr><td><span class="irrep">sad</span></td><td>B<sub>2u</sub></td><td>Δz ∝ x²−y²</td><td>saddled — pyrroles tilt alternately up/down</td></tr>
+<tr><td><span class="irrep">ruf</span></td><td>B<sub>1u</sub></td><td>Δz ∝ x·y</td><td>ruffled — meso C atoms alternate up/down</td></tr>
+<tr><td><span class="irrep">dom</span></td><td>A<sub>2u</sub></td><td>Δz ∝ r²</td><td>uniform doming / cup-shape</td></tr>
+<tr><td><span class="irrep">wav_x</span></td><td>E<sub>g</sub></td><td>Δz ∝ x·r²</td><td>waved along x</td></tr>
+<tr><td><span class="irrep">wav_y</span></td><td>E<sub>g</sub></td><td>Δz ∝ y·r²</td><td>waved along y</td></tr>
+<tr><td><span class="irrep">pro</span></td><td>A<sub>1u</sub></td><td>Δz ∝ x·y·(x²−y²)</td><td>propellered — each pyrrole twists about its own axis</td></tr>
+</table>
+
+<figure>
+  <img src="figures/porphyrin_oop.png" alt="Porphyrin OOP modes">
+  <figcaption>
+    <strong>Porphyrin OOP minimal basis.</strong> Top row: planar metallo-porphine
+    reference, sad (B<sub>2u</sub>), ruf (B<sub>1u</sub>), dom (deoxy-Hb hybrid).
+    Bottom row: wav_x, wav_y (E<sub>g</sub> pair), pro (A<sub>1u</sub>),
+    dom_pure (Sofia's analytic A<sub>2u</sub> basis vector — Tz-orthogonal,
+    atoms above and below the plane).
+    Distortion amplitude 1.0 Å for visibility. The <span class="irrep">dom</span>
+    mode is shown twice because chemistry textbooks and the analytic basis
+    paint slightly different pictures: the textbook deoxy-Hb dome lifts
+    every atom upward with the metal at the apex (a hybrid of A<sub>2u</sub>
+    + rigid-body Tz + metal-out-of-plane); Sofia's analytic basis is the
+    pure A<sub>2u</sub> eigenvector with the rigid-body Tz mode projected
+    out, so atoms move both above and below the plane. Same irrep, different
+    convention — Sofia uses the analytic version for the math, and shows
+    both for teaching.
+  </figcaption>
+</figure>
+
+<h3>In-plane modes (Δx, Δy)</h3>
+
+<p>
+  Six basis modes cover the IP distortion. Again, four are non-degenerate
+  and there's one E<sub>u</sub> pair (translation x / y).
+</p>
+
+<table>
+<tr><th>Mode</th><th>Irrep</th><th>Pattern</th><th>Geometric meaning</th></tr>
+<tr><td><span class="irrep">bre</span></td><td>A<sub>1g</sub></td><td>uniform Δr outward</td><td>breathing — uniform radial expansion</td></tr>
+<tr><td><span class="irrep">N-str</span></td><td>B<sub>1g</sub></td><td>Δr ∝ cos(2θ)</td><td>opposite-N pairs ↔ trans-N–N stretch</td></tr>
+<tr><td><span class="irrep">m-str</span></td><td>B<sub>2g</sub></td><td>Δr ∝ sin(2θ)</td><td>opposite-meso pairs ↔ trans-meso stretch</td></tr>
+<tr><td><span class="irrep">rot</span></td><td>A<sub>2g</sub></td><td>Δθ ∝ cos(4θ) tangential</td><td>in-phase rotation of the four pyrroles</td></tr>
+<tr><td><span class="irrep">trn_x</span></td><td>E<sub>u</sub></td><td>Δx ∝ r²</td><td>macrocycle translation in x vs metal</td></tr>
+<tr><td><span class="irrep">trn_y</span></td><td>E<sub>u</sub></td><td>Δy ∝ r²</td><td>same in y</td></tr>
+</table>
+
+<figure>
+  <img src="figures/porphyrin_ip.png" alt="Porphyrin IP modes">
+  <figcaption>
+    <strong>Porphyrin IP minimal basis.</strong> Planar reference, breathing
+    (A<sub>1g</sub>), N-stretched (B<sub>1g</sub>), m-stretched
+    (B<sub>2g</sub>), rotated (A<sub>2g</sub>), translated x and y
+    (E<sub>u</sub> pair). Distortion amplitude 1.0 Å.
+  </figcaption>
+</figure>
+
+<div class="callout">
+  <strong>Two viz quirks worth flagging.</strong>
+  (a) Sofia's analytic <span class="irrep">bre</span> amplitude is ≈ 0 by
+  construction — the orbit-symmetric in-plane reference choice makes the
+  basis vector vanish. The viz uses a uniform radial expansion instead, so
+  you can see what "breathing" means.
+  (b) The analytic <span class="irrep">trn_x</span> / <span class="irrep">trn_y</span>
+  basis is an r²-weighted wobble of the ring relative to the metal. The
+  chemistry intuition is "macrocycle slides relative to the metal", so the
+  viz uses uniform translation. Both quirks affect <em>only</em> the viz; the
+  analysis pipeline uses the analytic basis verbatim.
+</div>
+
+<h3>Same modes on a different macrocycle</h3>
+
+<p>
+  The minimal basis is constructed analytically from polynomial generators
+  of the (x, y) coordinates, so it adapts to any inner-ring atom count.
+  Apply Sofia's basis to corrin's 23-atom ring and you get 23-dimensional
+  Δz vectors per mode; apply it to corphin's 24-atom ring with F430's
+  peripheral shell and the substituents come along for the ride.
+</p>
+
+<figure>
+  <img src="figures/corrin_oop.png" alt="Corrin OOP modes">
+  <figcaption>
+    <strong>Corrin OOP minimal basis.</strong> Reference geometry is bare
+    Co(I) corrin (S=0). Note the missing fourth meso between two adjacent
+    Cα at the top of each panel — the corrin direct link. Because corrin
+    is C<sub>1</sub> symmetry (not D<sub>4h</sub>), the irrep labels are
+    nominal; the displacement patterns Sofia computes are still
+    well-defined polynomials on these 23 atoms.
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="figures/corphin_oop.png" alt="Corphin OOP modes">
+  <figcaption>
+    <strong>Corphin OOP minimal basis.</strong> Reference geometry is the
+    Ni²⁺ form of F430 (the F430-native state, the least distorted of our
+    test set). Methyl groups, propionamide stubs, and the F-ring lactam
+    ride rigidly with their nearest inner-ring atom under each distortion
+    — this is BFS-based propagation, with atoms equidistant from two macro
+    atoms (e.g. F-ring carbons bridging two adjacent Cα) inheriting the
+    average displacement of both parents.
+  </figcaption>
+</figure>
+
+
+<h2 id="pipeline">4. Inside Sofia: the analysis pipeline</h2>
+
+<p>
+  Given a Gaussian opt log, Sofia does six things in order:
+</p>
+
+<ol>
+  <li>
+    <strong>Parse the last <code>Standard orientation:</code> block.</strong>
+    Read the converged geometry (atomic numbers + Cartesian coordinates).
+    Anything other than the final geometry is ignored — Sofia is a
+    structural analyser, not a thermodynamic one.
+  </li>
+  <li>
+    <strong>Build the heavy-atom adjacency graph.</strong> Pairwise
+    distances; covalent thresholds parameterised per element (C–C 1.75 Å,
+    C–N 1.65 Å, M–N 2.6 Å, etc.). The graph walks identify atoms by
+    topology, not by atom indices.
+  </li>
+  <li>
+    <strong>Find the metal, then the inner ring.</strong> One transition
+    metal is required (Z ∈ {V, Cr, Mn, Fe, Co, Ni, Cu, Zn, Rh}). For
+    porphyrin / corphin: walk to the four pyrrole N's bonded to the metal
+    via the 5-ring N–Cα–Cβ–Cβ–Cα–N closure, then identify Cα and Cmeso
+    by their connectivity. For corrin: same, plus locate the unique
+    Cα–Cα direct bond that closes the ring instead of a fourth meso.
+  </li>
+  <li>
+    <strong>Fit the macrocyclic mean plane.</strong> SVD on the inner-ring
+    coordinates, then rotate the whole molecule so the plane normal aligns
+    with +z. The macrocycle now sits roughly in the xy plane.
+  </li>
+  <li>
+    <strong>Canonicalise xy.</strong> Rotate in-plane so the four N atoms
+    lie on the ±x and ±y axes. This fixes a global orientation: every
+    structure Sofia processes ends up in the same canonical frame, so the
+    signed amplitudes are directly comparable across files.
+  </li>
+  <li>
+    <strong>Project displacements onto the basis.</strong> For OOP, build
+    the analytic D<sub>4h</sub>-pattern Δz vectors and project the observed
+    Δz onto them. For IP, do the same with the analytic (Δx, Δy) basis.
+    Output the signed amplitudes plus the residual.
+  </li>
+</ol>
+
+<p>
+  The whole pipeline is deterministic — same input, same output. There
+  are no fitted parameters, no random initialisation. The only choices
+  Sofia makes are the covalent-radii thresholds for the adjacency graph
+  and the convention for the canonical orientation, both fixed by the
+  Jentzen-Song-Shelnutt 1997 reference.
+</p>
+
+
+<h2 id="using-sofia">5. Using Sofia</h2>
+
+<p>
+  Sofia has a master CLI (<code>sofia.py</code>) that dispatches to per-class
+  analysis modules. For a single file:
+</p>
+
+<pre><code>python3 sofia.py porphyrin examples/porphyrin/Co1_Pro.log
+python3 sofia.py corrin    examples/corrin/CoI_Corrin_S1.log
+python3 sofia.py corphin   examples/corphin/F430_Ni2.log
+</code></pre>
+
+<p>
+  For a whole directory (Sofia finds <code>.log</code> files recursively, one row per file
+  in the CSV):
+</p>
+
+<pre><code>python3 sofia.py porphyrin examples/porphyrin/ --csv out.csv --plot plots/
+</code></pre>
+
+<p>
+  Don't know which macrocycle class your file is? Use auto-detect — Sofia
+  walks the graph and dispatches:
+</p>
+
+<pre><code>python3 sofia.py auto examples/corrin/CoI_Corrin_S1.log
+# → identifies as corrin, runs the corrin pipeline
+</code></pre>
+
+<p>
+  Or just run <code>python3 sofia.py</code> with no arguments — that opens
+  an interactive prompt that walks you through macrocycle choice, mode
+  glossary, input path (with tab completion), CSV / plot options, and so
+  on. Recommended for first-time users.
+</p>
+
+<p>
+  The interactive prompt also offers to generate the <strong>visualization
+  bundle</strong> — at the start of the flow, Sofia asks whether you want
+  to render the minimal-basis modes for porphyrin, corrin, or corphin,
+  prompts for amplitude and output directory, and (if PyMOL is on PATH)
+  optionally renders PNG previews via headless PyMOL. So you don't need
+  to remember the <code>viz</code> subcommand or its flags — you can
+  drive the whole thing from a single <code>python3 sofia.py</code> call.
+</p>
+
+<h3>Sofia in an iterative workflow</h3>
+
+<p>
+  Sofia is built to be used <em>iteratively</em>, not as a one-shot batch
+  tool. A typical session looks like this: optimise a structure in
+  Gaussian, run Sofia to read off the distortion, look at the conformer
+  label, generate the viz bundle to <em>see</em> what the dominant mode
+  looks like, then go back to the input — change the metal, change the
+  spin state, change the axial ligand — re-optimise, re-run Sofia,
+  compare. The interactive prompt is designed for that loop: tab-complete
+  to the new log, accept the defaults you used last time, see the
+  numbers shift.
+</p>
+
+<p>
+  When you're working a directory of related structures (a metal series,
+  a spin-state series, a series of cofactor probes), point Sofia at the
+  directory once with <code>--csv</code> and <code>--plot</code> and you
+  get the cross-dataset summary in one go. Re-running after adding new
+  files is just re-running the same command — Sofia is stateless, so
+  iterative refinement does not pile up cruft.
+</p>
+
+
+<h3>The viz subcommand</h3>
+
+<pre><code># Build the porphyrin minimal-basis bundle (default)
+python3 sofia.py viz --amp 1.0
+
+# Corrin or corphin viz
+python3 sofia.py viz --type corrin  --amp 1.0
+python3 sofia.py viz --type corphin --amp 0.7
+
+# With headless PyMOL PNG previews
+python3 sofia.py viz --amp 1.0 --render
+</code></pre>
+
+
+<h2 id="output">6. Reading the output</h2>
+
+<h3>The per-file report</h3>
+
+<p>
+  For each input file, Sofia prints a structured report: header, mode
+  glossary, key findings (max |Δz|, |D<sub>op</sub>|, |D<sub>ip</sub>|,
+  metal-to-plane distance, mean M–N distance), then the OOP and IP
+  amplitude tables, per-irrep magnitudes, class-mean radii, and a
+  per-atom displacement table.
+</p>
+
+<p>
+  The <strong>conformer-label fingerprint</strong> is the headline
+  summary: a string like <code>saddled + ruffled</code> or
+  <code>propellered</code>. Modes are listed by amplitude, largest first,
+  joined by <code>+</code>. Any mode whose amplitude is ≥ 30 % of the
+  dominant is also included; if the dominant is below 0.05 Å (X-ray
+  uncertainty) the label is <code>essentially planar</code> (OOP) or
+  <code>essentially symmetric</code> (IP).
+</p>
+
+<h3>The CSV summary</h3>
+
+<p>
+  When you pass <code>--csv FILE</code>, Sofia writes one row per input.
+  The columns:
+</p>
+
+<table>
+<tr><th>Column</th><th>Meaning</th></tr>
+<tr><td><code>file</code></td><td>log file stem</td></tr>
+<tr><td><code>metal</code></td><td>element symbol of the macrocycle metal</td></tr>
+<tr><td><code>conformation_oop</code> / <code>conformation_ip</code></td><td>conformer-label fingerprint</td></tr>
+<tr><td><code>max_abs_dz_A</code></td><td>maximum absolute z-displacement of any inner-ring atom (Å)</td></tr>
+<tr><td><code>D_oop_obs_A</code>, <code>D_ip_obs_A</code></td><td>total observed OOP / IP distortion magnitude</td></tr>
+<tr><td><code>D_oop_minbasis_A</code>, <code>D_ip_minbasis_A</code></td><td>reconstruction from the minimal basis</td></tr>
+<tr><td><code>frac_explained_oop</code>, <code>frac_explained_ip</code></td><td>fraction of total distortion captured by the basis</td></tr>
+<tr><td><code>d_&lt;mode&gt;_A</code></td><td>signed amplitude (Å) of each minimal-basis mode</td></tr>
+<tr><td><code>Mag_&lt;irrep&gt;_A</code></td><td>per-irrep magnitude |D<sup>Γ</sup>|, basis-independent within the irrep</td></tr>
+<tr><td><code>M_to_plane_A</code></td><td>signed metal-to-mean-plane distance</td></tr>
+<tr><td><code>M_N_mean_A</code></td><td>mean metal–N distance</td></tr>
+<tr><td><code>r_&lt;class&gt;_A</code></td><td>mean centroid-to-class distance for N / Cα / Cmeso / Cβ</td></tr>
+</table>
+
+<p>
+  Corrin adds axial-ligand columns (<code>n_axial</code>,
+  <code>axial_above_atom</code>, etc.). QM/MM adds spin / multiplicity
+  metadata. The CSV is the primary input for downstream cross-dataset
+  plots and statistical analysis — paste it into pandas, ggplot,
+  whatever.
+</p>
+
+<h3>The plots</h3>
+
+<p>
+  With <code>--plot DIR</code>, Sofia writes per-file figures
+  (<code>&lt;stem&gt;_OOP.png</code> showing Δz profile + minimal-basis
+  reconstruction, <code>&lt;stem&gt;_IP.png</code> for the in-plane
+  channel) and cross-dataset summaries
+  (<code>_summary_OOP.png</code> / <code>_summary_IP.png</code>: a grid
+  of bar charts, one panel per mode, bars across files in the directory).
+</p>
+
+
+<h2 id="viz">7. The PyMOL visualization bundle</h2>
+
+<p>
+  The <code>viz</code> subcommand generates a directory like
+  <code>viz/porphyrin/</code> containing:
+</p>
+
+<ul>
+  <li><code>porphyrin_planar.pdb</code> — flat reference geometry.</li>
+  <li><code>porphyrin_sad.pdb</code>, <code>porphyrin_ruf.pdb</code>, … —
+      one PDB per OOP and IP minimal-basis mode, each showing the planar
+      reference with that mode's Δz (or Δx, Δy) pattern applied at the
+      requested amplitude.</li>
+  <li><code>porphyrin_oop_modes.pml</code>, <code>porphyrin_ip_modes.pml</code> —
+      PyMOL scripts that load the bundle into a side-by-side grid, set
+      colours, labels, camera tilt, and rendering options.</li>
+</ul>
+
+<p>
+  The PDB files use explicit <code>CONECT</code> records so PyMOL keeps
+  the macrocyclic skeleton drawn at any amplitude — including corrin's
+  Cα–Cα direct link and corphin's F-ring lactam, which would otherwise
+  drop out at large distortions when bond-length-based bonding fails.
+</p>
+
+<p>
+  To render PNG previews headlessly:
+</p>
+
+<pre><code>pymol -cq viz/porphyrin/porphyrin_oop_modes.pml \
+      -d 'ray 1800, 1100; png oop.png; quit'
+</code></pre>
+
+<p>
+  Or pass <code>--render</code> to <code>sofia.py viz</code> and Sofia
+  does this for both grids automatically (as long as PyMOL is on PATH).
+</p>
+
+
+<h2 id="caveats">8. Caveats and limitations</h2>
+
+<p><strong>D<sub>4h</sub> symmetry is an idealisation.</strong>
+  Real macrocycles in real molecules are rarely purely D<sub>4h</sub> —
+  peripheral substituents break the symmetry, the metal can break it,
+  axial ligands can break it. Sofia uses the analytic D<sub>4h</sub>
+  basis as a <em>fixed</em> coordinate system to project distortions
+  onto, not as a claim that the molecule is D<sub>4h</sub>. The signed
+  amplitudes are well-defined geometric projections regardless of the
+  molecule's true symmetry.
+</p>
+
+<p><strong>For corrin, the D<sub>4h</sub> labels are nominal.</strong>
+  Corrin is C<sub>1</sub> — only three mesos, one direct Cα–Cα link.
+  Sofia's analytic basis still produces well-defined polynomial Δz =
+  f(x, y) on the 23 inner-ring atoms, so the modes are valid as
+  geometric descriptors. The names <span class="irrep">sad</span>,
+  <span class="irrep">ruf</span>, <span class="irrep">dom</span> carry
+  their porphyrin meaning by analogy. The per-irrep magnitudes are
+  <em>not</em> rigorously basis-independent in the way they are for
+  porphyrin (corrin doesn't have those irreps).
+</p>
+
+<p><strong>For corphin / F430, same warning.</strong> The saturation
+  pattern (sp³ pyrrole carbons + fused F-ring) breaks four-fold symmetry.
+  Sofia's analysis is robust geometrically (mean plane, |D<sub>oop</sub>|,
+  |D<sub>ip</sub>|, M-plane, M–N, class radii are all rigorous), but
+  the irrep labels are approximate classifications. For a basis-rigorous
+  corphin analysis use Sofia's <code>corrin-freq</code> module with a
+  Gaussian-derived normal-mode basis (Variant iii in the manuscript).
+</p>
+
+<p><strong>Sofia is geometry-only.</strong> It does not read SCF energies,
+  molecular orbitals, populations, or frequencies. It needs only the final
+  optimised geometry. The flip side is that it works on any tetrapyrrole
+  log, regardless of the underlying level of theory — Sofia's output
+  describes the structure, not the electronics.
+</p>
+
+<p><strong>The minimal basis is, by design, incomplete.</strong> Sofia
+  reports <code>frac_explained_oop</code> and <code>frac_explained_ip</code>
+  — the fraction of the observed distortion that the minimal basis
+  captures. Typical values are 70–95 %; the rest is higher-mode contributions
+  (mostly higher-frequency normal modes within the same irrep, plus
+  numerical residual). If <code>frac_explained</code> falls below ~50 %,
+  something unusual is happening — peripheral-substituent strain, a
+  non-tetrapyrrole component intruding on the mean plane, an exotic
+  conformer the minimal basis doesn't reach. Investigate before publishing.
+</p>
+
+
+<h2 id="further">9. Further reading</h2>
+
+<ul>
+  <li>
+    <strong>The Manual.</strong> <a href="../Manual.md">Manual.md</a> in
+    the repo — full theory, basis construction details, per-script
+    implementation notes, the analytic polynomials, the canonical-frame
+    convention.
+  </li>
+  <li>
+    <strong>The original NSD paper.</strong>
+    Jentzen, W.; Song, X.-Z.; Shelnutt, J. A.
+    <em>Structural Characterization of Synthetic and Protein-Bound
+    Porphyrins in Terms of the Lowest-Frequency Normal Coordinates of
+    the Macrocycle.</em>
+    J. Phys. Chem. B <strong>1997</strong>, <em>101</em>, 1684–1699.
+  </li>
+  <li>
+    <strong>Examples in the repo.</strong> <code>examples/porphyrin/</code>,
+    <code>examples/corrin/</code>, <code>examples/corphin/</code> —
+    three stripped Gaussian logs per macrocycle class, each runs end to
+    end with Sofia. Diff your output against the expected results for a
+    quick install check.
+  </li>
+  <li>
+    <strong>The README quick-reference.</strong>
+    <a href="../README.md">README.md</a> for the CLI cheat-sheet, install
+    instructions, and a worked example without the theory background.
+  </li>
+</ul>
+
+<footer>
+  <p>
+    Sofia is named after the dome of Hagia Sofia — and the
+    <span class="irrep">dom</span> mode of the NSD basis.
+  </p>
+  <p>
+    Sofia, and this lesson, were built collaboratively by
+    <strong>Adrian M.V. Brânzanic</strong> and
+    <strong>Claude</strong> (Anthropic) — through many sessions of
+    iterative refinement. The chemistry, the manuscript context, and the
+    judgment about what to include came from Adrian; the
+    code-as-it-stands, the analytic basis machinery, the visualization
+    pipeline, and this document were drafted and revised in dialogue.
+  </p>
+  <p>
+    MIT licensed. Copyright © 2026 Adrian M.V. Brânzanic, Radu Onija,
+    Sergiu-Raul Cosma, Radu Silaghi-Dumitrescu.
+  </p>
+</footer>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# Sofia generated outputs
+*.csv
+plots/
+reports/
+viz/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.python-version
+.venv/
+venv/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor cruft
+.idea/
+.vscode/
+*.swp
+*~

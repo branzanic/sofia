@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sofia — group theory primer</title>
+<style>
+  :root {
+    --fg: #1a1a1a;
+    --muted: #666;
+    --accent: #1a5490;
+    --accent-soft: #e8f0f8;
+    --border: #d8d8d8;
+    --code-bg: #f5f5f5;
+    --max: 760px;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 17px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: var(--fg);
+    line-height: 1.65;
+    margin: 0;
+    padding: 0;
+    background: #fafafa;
+  }
+  main {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 3em 1.4em 6em;
+    background: white;
+    box-shadow: 0 0 40px rgba(0,0,0,0.04);
+  }
+  header {
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 1.2em;
+    margin-bottom: 2em;
+  }
+  h1 {
+    font-size: 2.2em;
+    font-weight: 600;
+    margin: 0 0 .15em;
+    letter-spacing: -.01em;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 1.05em;
+    margin: 0;
+  }
+  .breadcrumb {
+    font-size: .9em;
+    color: var(--muted);
+    margin-bottom: 1em;
+  }
+  .breadcrumb a { color: var(--accent); }
+
+  h2 {
+    font-size: 1.55em;
+    margin-top: 2.2em;
+    margin-bottom: .6em;
+    padding-bottom: .2em;
+    border-bottom: 1px solid var(--border);
+    color: var(--accent);
+  }
+  h3 {
+    font-size: 1.18em;
+    margin-top: 1.6em;
+    margin-bottom: .4em;
+  }
+  p { margin: .6em 0; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  code {
+    font-family: "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: .92em;
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  pre {
+    background: var(--code-bg);
+    border-left: 3px solid var(--accent);
+    padding: .8em 1em;
+    overflow-x: auto;
+    line-height: 1.4;
+    font-size: .88em;
+    border-radius: 0 4px 4px 0;
+  }
+  pre code { background: none; padding: 0; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+    font-size: .94em;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: .45em .7em;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--accent-soft); font-weight: 600; }
+  td.center, th.center { text-align: center; }
+
+  .toc {
+    background: var(--accent-soft);
+    border-radius: 6px;
+    padding: 1em 1.6em;
+    margin: 1.6em 0;
+  }
+  .toc h2 {
+    border: none;
+    margin: 0 0 .4em;
+    font-size: 1em;
+    color: var(--fg);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .toc ol { margin: 0; padding-left: 1.4em; }
+  .toc li { margin: .2em 0; line-height: 1.4; }
+
+  .callout {
+    background: #fff8e0;
+    border-left: 3px solid #d4a410;
+    padding: .8em 1.1em;
+    margin: 1em 0;
+    border-radius: 0 4px 4px 0;
+    font-size: .95em;
+  }
+  .callout strong { color: #8a6800; }
+
+  .next-up {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 1em 1.2em;
+    margin: 2em 0;
+    border-radius: 0 4px 4px 0;
+  }
+  .next-up strong { color: var(--accent); }
+
+  .math { font-family: "Cambria Math", Cambria, Georgia, serif; font-style: italic; }
+  .irrep { font-family: "Cambria Math", Cambria, Georgia, serif; font-style: italic; white-space: nowrap; }
+
+  .ascii-art {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    background: var(--code-bg);
+    padding: 1em 1.2em;
+    border-radius: 4px;
+    line-height: 1.3;
+    font-size: .82em;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .char-table { font-size: .88em; }
+  .char-table th, .char-table td { padding: .35em .5em; text-align: center; }
+  .char-table th:first-child, .char-table td:first-child { text-align: left; }
+  .char-table .basis { color: var(--muted); font-size: .92em; }
+
+  footer {
+    margin-top: 4em;
+    padding-top: 1.2em;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: .9em;
+  }
+</style>
+</head>
+<body>
+<main>
+
+<p class="breadcrumb">
+  <a href="Sofia_lesson.html">← Sofia lesson</a> · prerequisite reading
+</p>
+
+<header>
+  <h1>Group theory for Sofia</h1>
+  <p class="subtitle">A prerequisite primer — symmetry, irreducible representations, and how they label distortion modes</p>
+</header>
+
+<p>
+  Sofia is full of cryptic two-letter labels: A<sub>1g</sub>, B<sub>2u</sub>,
+  E<sub>g</sub>. They label the rows of a character table — the irreducible
+  representations of the D<sub>4h</sub> point group — and they're the
+  language Sofia speaks for tetrapyrrole distortion. If you've never sat
+  through a dedicated group theory course, those symbols can feel like
+  hieroglyphics. This page walks you through just enough group theory to
+  read the main lesson without flinching: what a symmetry operation is,
+  what a point group is, what irreducible representations are, and how
+  the D<sub>4h</sub> labels encode geometric meaning.
+</p>
+
+<p>
+  This is a working primer, not a textbook. Each section after the
+  background ones (§1–§3) ends with one or two <em>worked examples</em>
+  done in full — every matrix multiplication written out, every character
+  derived, every basis vector evaluated. By the end you'll not only
+  understand Sofia's labels, you'll have decomposed a small representation
+  by hand, derived an irrep label from its polynomial, applied the
+  reduction formula, and built basis vectors from scratch. Standard
+  textbook material, but compressed to the path that matters for NSD.
+</p>
+
+<p>
+  For deeper machinery — projection operators, descent in symmetry,
+  full character-table construction — see the further-reading list at
+  the end.
+</p>
+
+<nav class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#why">Why group theory?</a></li>
+    <li><a href="#operations">Symmetry operations</a></li>
+    <li><a href="#point-groups">Point groups: D<sub>4h</sub></a></li>
+    <li><a href="#representations">Representations: operations as matrices</a></li>
+    <li><a href="#irreps">Irreducible representations</a></li>
+    <li><a href="#labels">Reading an irrep label</a></li>
+    <li><a href="#character-table">The D<sub>4h</sub> character table</a></li>
+    <li><a href="#basis-functions">Basis functions and polynomial generators</a></li>
+    <li><a href="#bridge">From group theory to NSD</a></li>
+    <li><a href="#further">Further reading</a></li>
+  </ol>
+</nav>
+
+
+<h2 id="why">1. Why group theory?</h2>
+
+<p>
+  Symmetry simplifies. If a molecule has a four-fold rotation axis, that's
+  not just a geometric fact — it's a constraint on every property of that
+  molecule. Vibrational modes that don't respect the four-fold axis are
+  forbidden as eigenvectors. Molecular orbitals split into symmetry types,
+  and only orbitals of the same symmetry type can mix. Spectroscopic
+  selection rules ("this transition is allowed; that one is forbidden")
+  fall out of symmetry arguments without writing down a single Schrödinger
+  equation.
+</p>
+
+<p>
+  Group theory is the rigorous machinery that turns "the molecule has
+  symmetry" into testable predictions. It does this by classifying
+  everything — orbitals, vibrations, distortions, dipole moments — into a
+  small finite set of <em>symmetry types</em>, called the irreducible
+  representations (irreps) of the molecule's point group. Once you know
+  which irrep a thing belongs to, you know how it transforms under every
+  symmetry operation, and most of the bookkeeping is done.
+</p>
+
+<p>
+  For Sofia: NSD describes a tetrapyrrole distortion as a sum of
+  contributions from each D<sub>4h</sub> irrep. To read Sofia's output
+  you need to know what those irreps are, what they mean physically, and
+  why the labels (A<sub>2u</sub>, B<sub>1u</sub>, etc.) are organised the
+  way they are. That's what this primer is for.
+</p>
+
+
+<h2 id="operations">2. Symmetry operations</h2>
+
+<p>
+  A <strong>symmetry operation</strong> is an action on a molecule that
+  leaves it indistinguishable from where it started. Imagine you turn
+  away while a friend rotates a benzene ring by 60 ° around its central
+  axis; when you turn back, you can't tell whether they did anything.
+  That 60 ° rotation is a symmetry operation of benzene.
+</p>
+
+<p>
+  There are five types of symmetry operations:
+</p>
+
+<table>
+<tr><th>Symbol</th><th>Name</th><th>What it does</th></tr>
+<tr><td><span class="math">E</span></td><td>identity</td><td>do nothing (always a valid symmetry operation)</td></tr>
+<tr><td><span class="math">C<sub>n</sub></span></td><td>proper rotation</td><td>rotate by 360°/<span class="math">n</span> about an axis</td></tr>
+<tr><td><span class="math">σ</span></td><td>mirror plane</td><td>reflect through a plane</td></tr>
+<tr><td><span class="math">i</span></td><td>inversion</td><td>send each atom (x, y, z) → (−x, −y, −z) through the centre</td></tr>
+<tr><td><span class="math">S<sub>n</sub></span></td><td>improper rotation</td><td>rotate by 360°/<span class="math">n</span>, then reflect through the plane perpendicular to that axis</td></tr>
+</table>
+
+<p>
+  For a metalloporphyrin sitting flat on a table with the metal at the
+  origin, you can probably <em>see</em> several of these:
+</p>
+
+<ul>
+  <li>A four-fold rotation axis (C<sub>4</sub>) through the metal,
+      perpendicular to the macrocyclic plane — rotating by 90° lands one
+      pyrrole on the next.</li>
+  <li>A horizontal mirror plane (σ<sub>h</sub>) — the macrocyclic plane
+      itself; reflection through it sends "above" atoms to "below".</li>
+  <li>Two pairs of vertical mirror planes (σ<sub>v</sub>, σ<sub>d</sub>) —
+      one pair through opposite N's, one pair through opposite Cmeso's.</li>
+  <li>An inversion centre (i) at the metal — every (x, y, z) atom has a
+      mate at (−x, −y, −z).</li>
+</ul>
+
+
+<h2 id="point-groups">3. Point groups: D<sub>4h</sub></h2>
+
+<p>
+  A <strong>point group</strong> is the complete set of symmetry operations
+  that leave a molecule invariant. Each molecule belongs to one and only
+  one point group. The point group of an idealised, perfectly flat
+  metalloporphyrin is <strong>D<sub>4h</sub></strong>: it has a four-fold
+  rotation axis (the "4"), four perpendicular two-fold axes (the "D"), and
+  a horizontal mirror plane (the "h"). Together, these generate the
+  following 16 operations:
+</p>
+
+<div class="ascii-art">  D4h operations (16 total, organised in classes):
+
+      E       1 identity
+      2 C4    rotation by ±90° about the principal axis (z)
+      C2      rotation by 180° about the principal axis  (= C4²)
+      2 C2'   rotation by 180° about axes through opposite N's (x, y)
+      2 C2''  rotation by 180° about axes through opposite mesos (45° offset)
+      i       inversion through the centre
+      2 S4    improper rotation by ±90°
+      σh      horizontal mirror (the macrocyclic plane)
+      2 σv    vertical mirrors through opposite N's
+      2 σd    vertical mirrors through opposite mesos</div>
+
+<p>
+  The <em>classes</em> are sets of operations that are related by symmetry
+  — for instance, the 90 ° rotation and the −90 ° rotation form a single
+  class, "2C<sub>4</sub>", because there's another symmetry operation
+  (σ<sub>v</sub>) that maps one to the other. The number of classes
+  matters: it equals the number of distinct irreducible representations
+  the group has. For D<sub>4h</sub>, there are 10 classes — and so 10
+  irreps.
+</p>
+
+<div class="callout">
+  <strong>Real metalloporphyrins are rarely D<sub>4h</sub>.</strong>
+  Saturation of one pyrrole, peripheral substituents, the ruffled or
+  saddled state of the macrocycle — all break the symmetry. The point
+  is that the <em>idealised</em> flat porphyrin is D<sub>4h</sub>, and
+  that's the basis we use to classify <em>distortions away from</em>
+  D<sub>4h</sub>. NSD asks: "if we started in the D<sub>4h</sub> ideal
+  and then displaced the atoms, which irrep components of that
+  displacement are most prominent?"
+</div>
+
+
+<h2 id="representations">4. Representations: operations as matrices</h2>
+
+<p>
+  Symmetry operations are abstract — "rotate by 90°" is a verbal
+  instruction. To use them in a calculation we need a concrete way to
+  apply them to numerical things (atomic positions, orbital coefficients,
+  vibrational displacements). That concrete realisation is called a
+  <strong>representation</strong>: each operation gets matched with a
+  square matrix that performs the same action on a chosen basis.
+</p>
+
+<p>
+  Take the simplest case: a single (x, y, z) position vector at the origin.
+  A 90° rotation about z is the matrix:
+</p>
+
+<pre><code>          [ cos 90°  -sin 90°   0 ]   [  0  -1   0 ]
+C4(z) =   [ sin 90°   cos 90°   0 ] = [  1   0   0 ]
+          [   0          0       1 ]   [  0   0   1 ]</code></pre>
+
+<p>
+  To <em>apply</em> this matrix to a vector, you do
+  <strong>matrix-vector multiplication</strong>: the <em>i</em>-th
+  component of the output is the dot product of the <em>i</em>-th
+  <em>row</em> of the matrix with the input vector. Three rows in, three
+  components out. Let's actually do it.
+</p>
+
+<h3>Worked example 1: rotating the +x axis</h3>
+
+<p>
+  Start with the unit vector (1, 0, 0) — a point one unit east. We expect
+  a 90° rotation about z (counter-clockwise when looking down the z-axis)
+  to send it to (0, 1, 0), i.e. one unit north. Multiplying out:
+</p>
+
+<pre><code>            [  0  -1   0 ]   [ 1 ]   [ (0)(1) + (-1)(0) + (0)(0) ]   [ 0 ]
+C4(z)·v  =  [  1   0   0 ] · [ 0 ] = [ (1)(1) +   (0)(0) + (0)(0) ] = [ 1 ]
+            [  0   0   1 ]   [ 0 ]   [ (0)(1) +   (0)(0) + (1)(0) ]   [ 0 ]</code></pre>
+
+<p>
+  Reading the three rows in turn:
+</p>
+
+<ul>
+  <li><strong>Row 1</strong> tells you the new x-component:
+      <span class="math">x' = (0)(1) + (−1)(0) + (0)(0) = 0</span>.</li>
+  <li><strong>Row 2</strong> tells you the new y-component:
+      <span class="math">y' = (1)(1) + (0)(0) + (0)(0) = 1</span>.</li>
+  <li><strong>Row 3</strong> tells you the new z-component:
+      <span class="math">z' = (0)(1) + (0)(0) + (1)(0) = 0</span>.</li>
+</ul>
+
+<p>
+  Result: (0, 1, 0). The +x axis has indeed rotated onto the +y axis ✓.
+</p>
+
+<h3>Worked example 2: a non-trivial vector</h3>
+
+<p>
+  Now try (2, 1, 3) — a point 2 units east, 1 north, 3 up. Same rotation:
+</p>
+
+<pre><code>            [  0  -1   0 ]   [ 2 ]   [ (0)(2) + (-1)(1) + (0)(3) ]   [ -1 ]
+C4(z)·v  =  [  1   0   0 ] · [ 1 ] = [ (1)(2) +   (0)(1) + (0)(3) ] = [  2 ]
+            [  0   0   1 ]   [ 3 ]   [ (0)(2) +   (0)(1) + (1)(3) ]   [  3 ]</code></pre>
+
+<p>
+  Result: (−1, 2, 3). Two things are worth noting:
+</p>
+
+<ol>
+  <li>
+    The <strong>z-component is unchanged</strong> (3 → 3). That's because
+    we rotated <em>about</em> the z-axis — points on the z-axis don't
+    move, and the z-component of any vector is preserved. This is why
+    the bottom row of C<sub>4</sub>(z) is (0, 0, 1): "leave z alone".
+  </li>
+  <li>
+    The <strong>x and y components got mixed</strong>: the new x is the
+    old (−y), and the new y is the old x. That mixing is exactly what a
+    rotation does — it shuffles components within the rotation plane.
+  </li>
+</ol>
+
+<h3>Worked example 3: a mirror reflection</h3>
+
+<p>
+  The horizontal mirror plane σ<sub>h</sub> (the macrocyclic plane,
+  z = 0) sends (x, y, z) → (x, y, −z). As a matrix:
+</p>
+
+<pre><code>           [ 1   0   0 ]
+σh    =    [ 0   1   0 ]
+           [ 0   0  -1 ]</code></pre>
+
+<p>
+  Apply it to a point 5 units above the plane, (0, 0, 5):
+</p>
+
+<pre><code>            [ 1   0   0 ]   [ 0 ]   [ (1)(0) + (0)(0) +  (0)(5) ]   [  0 ]
+σh·v   =    [ 0   1   0 ] · [ 0 ] = [ (0)(0) + (1)(0) +  (0)(5) ] = [  0 ]
+            [ 0   0  -1 ]   [ 5 ]   [ (0)(0) + (0)(0) + (-1)(5) ]   [ -5 ]</code></pre>
+
+<p>
+  Result: (0, 0, −5). The point 5 above the plane has been sent to its
+  mirror image 5 below ✓. Only the z-component flipped — x and y were
+  on the mirror plane, so they're unchanged.
+</p>
+
+<h3>Worked example 4: composing operations</h3>
+
+<p>
+  Symmetry operations <em>compose</em>: applying two of them in sequence
+  is itself a symmetry operation. We can verify this by multiplying the
+  matrices. Apply C<sub>4</sub>(z) twice — that should give a 180°
+  rotation, which is C<sub>2</sub>(z):
+</p>
+
+<pre><code>                     [  0  -1   0 ]   [  0  -1   0 ]   [ -1   0   0 ]
+C4(z) · C4(z)   =    [  1   0   0 ] · [  1   0   0 ] = [  0  -1   0 ]
+                     [  0   0   1 ]   [  0   0   1 ]   [  0   0   1 ]</code></pre>
+
+<p>
+  The result is diag(−1, −1, 1) — exactly the matrix for a 180° rotation
+  about z, which sends (x, y, z) → (−x, −y, z). So in our representation,
+  C<sub>4</sub>² = C<sub>2</sub>, just as we'd expect from the geometric
+  picture. The matrices encode the group structure faithfully.
+</p>
+
+<p>
+  The collection of one matrix per symmetry operation, all acting on the
+  same basis, is the <em>representation of the group on that basis</em>.
+  Different bases give different representations (a 24-component basis of
+  inner-ring Δz values gives 24×24 matrices), but the underlying group
+  structure — which operations compose to which — is always the same.
+</p>
+
+
+<h2 id="irreps">5. Irreducible representations</h2>
+
+<p>
+  Here's the key idea. Most bases you might pick — say, the 24 inner-ring
+  Δz displacements of a porphyrin — give you a "big" representation: 24×24
+  matrices, one per symmetry operation. Most of those big matrices are
+  ugly. But it's always possible to <em>change basis</em> so that all the
+  big matrices simultaneously become block-diagonal:
+</p>
+
+<div class="ascii-art">                 [ ■                     ]
+                 [   ■                   ]
+                 [     ■■                ]      ← each block is one irrep
+  M(operation) = [     ■■                ]
+                 [         ■             ]
+                 [           ■           ]
+                 [             ■■■■■■■■  ]</div>
+
+<p>
+  Each block is itself a representation, but a smaller one. If you keep
+  decomposing, you eventually reach blocks that <em>cannot</em> be reduced
+  further — those are the <strong>irreducible representations</strong>
+  ("irreps") of the group. Every basis you choose decomposes into a
+  combination of these basic building blocks, in the same way every
+  vector decomposes into x, y, z components.
+</p>
+
+<h3>Worked example: 4 N atoms, Δz displacements, C<sub>4</sub> rotation</h3>
+
+<p>
+  Doing this on a 24×24 matrix would fill a textbook chapter. So let's
+  do it on a small toy version that has all the structure of the real
+  porphyrin case. Place four N atoms at the corners of a square, on the
+  axes:
+</p>
+
+<pre><code>N1 at (+a, 0, 0)     +y
+N2 at (0, +a, 0)      |
+N3 at (-a, 0, 0)      |
+N4 at (0, -a, 0)      N2
+                      |
+              N3 ─────M─────N1   +x
+                      |
+                      N4
+                      |</code></pre>
+
+<p>
+  Pick a basis of one Δz displacement per atom: e<sub>1</sub> = "Δz at N<sub>1</sub>",
+  e<sub>2</sub> = "Δz at N<sub>2</sub>", e<sub>3</sub> = "Δz at N<sub>3</sub>",
+  e<sub>4</sub> = "Δz at N<sub>4</sub>". This is a 4-dimensional vector
+  space — any pattern of out-of-plane displacements on the four N's is a
+  vector (a, b, c, d) in this basis.
+</p>
+
+<p>
+  How does the C<sub>4</sub>(z) rotation (90° CCW) act on this basis? It
+  sends N<sub>1</sub> → N<sub>2</sub>, N<sub>2</sub> → N<sub>3</sub>,
+  N<sub>3</sub> → N<sub>4</sub>, N<sub>4</sub> → N<sub>1</sub>. So a
+  displacement at N<sub>1</sub> ends up at N<sub>2</sub>'s location after
+  rotation, and so on cyclically. The matrix of C<sub>4</sub> in the
+  {e<sub>1</sub>, e<sub>2</sub>, e<sub>3</sub>, e<sub>4</sub>} basis is
+  the cyclic permutation matrix:
+</p>
+
+<pre><code>         [ 0  0  0  1 ]
+C4   =   [ 1  0  0  0 ]
+         [ 0  1  0  0 ]
+         [ 0  0  1  0 ]</code></pre>
+
+<p>
+  (Read column by column: the first column is the image of e<sub>1</sub>,
+  which is e<sub>2</sub> — i.e. (0, 1, 0, 0). The second column is the
+  image of e<sub>2</sub> = e<sub>3</sub>, and so on.) Sanity check: apply
+  to (1, 0, 0, 0) — a unit displacement only at N<sub>1</sub>:
+</p>
+
+<pre><code>            [ 0  0  0  1 ]   [ 1 ]   [ 0 ]
+C4·v   =    [ 1  0  0  0 ] · [ 0 ] = [ 1 ]
+            [ 0  1  0  0 ]   [ 0 ]   [ 0 ]
+            [ 0  0  1  0 ]   [ 0 ]   [ 0 ]</code></pre>
+
+<p>
+  Result: (0, 1, 0, 0) — the displacement is now only at N<sub>2</sub>,
+  exactly where the rotation moved N<sub>1</sub> ✓.
+</p>
+
+<p>
+  This 4×4 matrix is a representation of C<sub>4</sub>, and as it stands
+  it's <em>reducible</em> — there's nothing block-diagonal about it. But
+  if we change basis we can do better.
+</p>
+
+<h3>Change of basis to symmetry-adapted combinations</h3>
+
+<p>
+  Define four new basis vectors as linear combinations of the originals:
+</p>
+
+<pre><code>f_A   = ½ (e1 + e2 + e3 + e4)         "all four N's move up together"
+f_B   = ½ (e1 - e2 + e3 - e4)         "alternating up/down/up/down"
+f_E1  = (1/√2) (e1 - e3)              "+x N up, -x N down; y N's still"
+f_E2  = (1/√2) (e2 - e4)              "+y N up, -y N down; x N's still"</code></pre>
+
+<p>
+  These four are orthogonal to each other (check: any pair has zero dot
+  product) and they span the same 4D space as {e<sub>1</sub>, e<sub>2</sub>,
+  e<sub>3</sub>, e<sub>4</sub>}. Now let's see how C<sub>4</sub> acts on
+  each one.
+</p>
+
+<p>
+  <strong>The totally symmetric one, f<sub>A</sub>.</strong> C<sub>4</sub>
+  permutes the e's cyclically, but the sum is invariant under the
+  permutation:
+</p>
+
+<pre><code>C4 · f_A  =  ½ C4(e1 + e2 + e3 + e4)
+          =  ½ (e2 + e3 + e4 + e1)
+          =  ½ (e1 + e2 + e3 + e4)
+          =  f_A                    (character: +1 — type A)</code></pre>
+
+<p>
+  <strong>The alternating one, f<sub>B</sub>.</strong> The cyclic shift
+  flips the alternation:
+</p>
+
+<pre><code>C4 · f_B  =  ½ C4(e1 - e2 + e3 - e4)
+          =  ½ (e2 - e3 + e4 - e1)
+          =  −½ (e1 - e2 + e3 - e4)
+          =  −f_B                   (character: −1 — type B)</code></pre>
+
+<p>
+  <strong>The two antisymmetric ones, f<sub>E1</sub> and f<sub>E2</sub>.</strong>
+  These get mixed:
+</p>
+
+<pre><code>C4 · f_E1  =  (1/√2) C4(e1 - e3)  =  (1/√2)(e2 - e4)  =  f_E2
+C4 · f_E2  =  (1/√2) C4(e2 - e4)  =  (1/√2)(e3 - e1)  =  −f_E1</code></pre>
+
+<p>
+  C<sub>4</sub> takes f<sub>E1</sub> to f<sub>E2</sub>, and f<sub>E2</sub>
+  to −f<sub>E1</sub>. Neither one alone is sent to a multiple of itself —
+  they're <em>locked together</em> as a 2D pair under this rotation.
+</p>
+
+<h3>The new (block-diagonal) matrix</h3>
+
+<p>
+  Assembling these four results into the matrix of C<sub>4</sub> in the
+  new basis {f<sub>A</sub>, f<sub>B</sub>, f<sub>E1</sub>, f<sub>E2</sub>}
+  (one image per column):
+</p>
+
+<pre><code>         [  1    0    0    0  ]
+new      [  0   -1    0    0  ]
+C4   =   [  0    0    0   -1  ]
+         [  0    0    1    0  ]</code></pre>
+
+<p>
+  This is block-diagonal! Three independent blocks:
+</p>
+
+<table>
+<tr><th>Block</th><th>Size</th><th>Behaviour under C<sub>4</sub></th><th>Irrep type</th></tr>
+<tr><td>[ 1 ]</td><td>1×1</td><td>character +1 (invariant)</td><td>A — totally symmetric</td></tr>
+<tr><td>[ −1 ]</td><td>1×1</td><td>character −1 (sign-flipping)</td><td>B — antisymmetric under C<sub>4</sub></td></tr>
+<tr><td>[ 0 −1 ; 1 0 ]</td><td>2×2</td><td>characters mix the two basis vectors</td><td>E — degenerate pair</td></tr>
+</table>
+
+<p>
+  And notice something striking: the 2×2 block in the lower right is
+  <em>exactly</em> the C<sub>4</sub>(z) matrix from §4 acting on the
+  (x, y) plane. It is the same rotation, in a different incarnation —
+  the (f<sub>E1</sub>, f<sub>E2</sub>) pair transforms <em>just like</em>
+  (x, y) does. That's why the basis-functions column of the character
+  table lists "(x, y)" as a basis for the E<sub>u</sub> irrep, and
+  "(xz, yz)" as a basis for the E<sub>g</sub> irrep: same transformation
+  rule, different physical objects.
+</p>
+
+<h3>Why is the 2×2 block irreducible?</h3>
+
+<p>
+  Could we keep decomposing — split the 2×2 block into two 1×1 blocks?
+  No. To do that we'd need to find a 1D subspace of the
+  (f<sub>E1</sub>, f<sub>E2</sub>) plane that C<sub>4</sub> sends back
+  into itself (just multiplied by a scalar). But a 90° rotation has no
+  real fixed axes inside its rotation plane — every nonzero vector gets
+  rotated to a different direction. The 2×2 block can't be reduced any
+  further while keeping all matrices real, so it stands as a single
+  2-dimensional irrep. <em>This is the meaning of "irreducible" in
+  practice</em>: the block is genuinely tied together by the group's
+  action, and any attempt to split it would force you to drop some of
+  the symmetry operations.
+</p>
+
+<p>
+  We just decomposed a 4D representation as A ⊕ B ⊕ E (one A block, one
+  B block, one 2D E block; total dimension 1 + 1 + 2 = 4 ✓). For Sofia,
+  the same reasoning applies on the full 24 inner-ring atoms — except
+  there the matrices are 24×24, you do this once for OOP and once for
+  IP, and you keep going under all 16 D<sub>4h</sub> operations
+  simultaneously. The result is the decomposition of the 72-component
+  displacement space into D<sub>4h</sub> irreps. Sofia's signed
+  amplitudes are the projection coefficients onto each irrep block.
+</p>
+
+<p>
+  For D<sub>4h</sub>, the 10 irreps go by the names <strong>A<sub>1g</sub>,
+  A<sub>2g</sub>, B<sub>1g</sub>, B<sub>2g</sub>, E<sub>g</sub>,
+  A<sub>1u</sub>, A<sub>2u</sub>, B<sub>1u</sub>, B<sub>2u</sub>,
+  E<sub>u</sub></strong>. Eight are 1-dimensional (each block is 1×1, a
+  single number) and two are 2-dimensional (E<sub>g</sub> and
+  E<sub>u</sub>; each block is 2×2). That's why E<sub>g</sub> and
+  E<sub>u</sub> always come as <em>pairs</em>: in NSD,
+  <span class="irrep">wav_x</span> and <span class="irrep">wav_y</span>
+  together span the E<sub>g</sub> irrep, and
+  <span class="irrep">trn_x</span> /
+  <span class="irrep">trn_y</span> together span E<sub>u</sub>.
+</p>
+
+
+<h2 id="labels">6. Reading an irrep label</h2>
+
+<p>
+  The Mulliken labels (A<sub>1g</sub>, B<sub>2u</sub>, etc.) are not
+  random; each piece of the label tells you something about how that
+  irrep behaves under the group's operations.
+</p>
+
+<table>
+<tr><th>Letter / subscript</th><th>Tells you about</th><th>Meaning</th></tr>
+<tr>
+  <td><strong>A</strong></td>
+  <td>behaviour under C<sub>4</sub> (the principal rotation)</td>
+  <td>symmetric — character +1 under the principal rotation</td>
+</tr>
+<tr>
+  <td><strong>B</strong></td>
+  <td>behaviour under C<sub>4</sub></td>
+  <td>antisymmetric — character −1 under the principal rotation</td>
+</tr>
+<tr>
+  <td><strong>E</strong></td>
+  <td>dimensionality</td>
+  <td>2-dimensional irrep (a degenerate pair)</td>
+</tr>
+<tr>
+  <td>subscript <strong>1</strong></td>
+  <td>behaviour under C<sub>2</sub>'</td>
+  <td>symmetric (+1) under the secondary 2-fold axis through opposite N's</td>
+</tr>
+<tr>
+  <td>subscript <strong>2</strong></td>
+  <td>behaviour under C<sub>2</sub>'</td>
+  <td>antisymmetric (−1) under the secondary 2-fold axis</td>
+</tr>
+<tr>
+  <td>subscript <strong>g</strong></td>
+  <td>behaviour under inversion <span class="math">i</span></td>
+  <td>"gerade" (even) — character +1 under inversion</td>
+</tr>
+<tr>
+  <td>subscript <strong>u</strong></td>
+  <td>behaviour under inversion <span class="math">i</span></td>
+  <td>"ungerade" (odd) — character −1 under inversion</td>
+</tr>
+</table>
+
+<p>
+  This is the discipline group theory enforces: every irrep label is a
+  three-letter encoding of how that thing transforms under three key
+  operations (C<sub>4</sub>, C<sub>2</sub>', i). Memorise the encoding
+  once, and you can read any irrep label in any character table.
+</p>
+
+<h3>How to act on a polynomial</h3>
+
+<p>
+  To assign an irrep to a polynomial like x² − y², we need to know how it
+  transforms under each operation. The recipe is mechanical:
+</p>
+
+<ul>
+  <li>Pick the operation R; write down where it sends (x, y, z) — for
+      C<sub>4</sub>(z) that's (x, y, z) → (−y, x, z), for inversion it's
+      (−x, −y, −z), and so on.</li>
+  <li>Substitute those mapped coordinates into f wherever you see x, y, z,
+      and simplify.</li>
+  <li>Compare the result to the original f. If you get +f, the character
+      is +1 (symmetric). If you get −f, the character is −1 (antisymmetric).
+      If you get a different function entirely, f wasn't a basis function
+      for a 1D irrep — it's part of a higher-dimensional irrep (like
+      E<sub>g</sub> or E<sub>u</sub>).</li>
+</ul>
+
+<p>
+  (Strictly, the active-transformation rule is "substitute the
+  <em>inverse</em>-rotated coordinates": (R · f)(p) = f(R<sup>−1</sup>p).
+  For the polynomials in the D<sub>4h</sub> character table — all even
+  in their position arguments — substituting R or R<sup>−1</sup> gives the
+  same answer for the character, so we drop the inverse and just substitute
+  the rotated coordinates. The character is what matters.)
+</p>
+
+<h3>Worked example 1: x² − y² is B<sub>1g</sub></h3>
+
+<p>
+  Take f(x, y, z) = x² − y². We expect this to transform as B<sub>1g</sub>
+  (that's what the character table says). Let's verify by applying the three
+  diagnostic operations.
+</p>
+
+<p><strong>Under C<sub>4</sub>(z)</strong> — sends (x, y, z) → (−y, x, z):
+</p>
+
+<pre><code>f(x, y, z)  =  x² − y²
+       ↓ apply C4
+f' = (-y)² − (x)²  =  y² − x²  =  −(x² − y²)  =  −f      ⟹ character: −1   (letter B)</code></pre>
+
+<p><strong>Under C<sub>2</sub>'(x-axis)</strong> — rotation by 180° about
+  the x-axis, sends (x, y, z) → (x, −y, −z):
+</p>
+
+<pre><code>f(x, y, z)  =  x² − y²
+       ↓ apply C2'(x)
+f' = (x)² − (−y)²  =  x² − y²  =  +f                     ⟹ character: +1   (subscript "1")</code></pre>
+
+<p><strong>Under inversion i</strong> — sends (x, y, z) → (−x, −y, −z):
+</p>
+
+<pre><code>f(x, y, z)  =  x² − y²
+       ↓ apply i
+f' = (−x)² − (−y)²  =  x² − y²  =  +f                    ⟹ character: +1   (subscript "g")</code></pre>
+
+<p>
+  Read off the irrep label letter by letter: <strong>B</strong>
+  (antisymmetric under C<sub>4</sub>) <strong>1</strong> (symmetric under
+  C<sub>2</sub>') <strong>g</strong> (symmetric under i) →
+  <strong>B<sub>1g</sub></strong>. ✓ This matches the character table.
+</p>
+
+<h3>Worked example 2: z is A<sub>2u</sub></h3>
+
+<p>
+  Now take f(x, y, z) = z. Geometrically this is "uniform translation along
+  z" — and it's also the leading-order polynomial generator for the
+  doming distortion (where every atom moves up or down according to a
+  smooth z-component pattern).
+</p>
+
+<pre><code>f = z
+       ↓ apply C4(z)         (z is unchanged by rotation about z)
+f' = z = +f                                              ⟹ +1   (letter A)
+
+       ↓ apply C2'(x)        (sends z → −z)
+f' = −z = −f                                             ⟹ −1   (subscript "2")
+
+       ↓ apply inversion i    (sends z → −z)
+f' = −z = −f                                             ⟹ −1   (subscript "u")</code></pre>
+
+<p>
+  Therefore <strong>A<sub>2u</sub></strong>. ✓ Same recipe, different
+  function — and you've just derived the irrep of the dom mode's
+  generator from scratch.
+</p>
+
+<h3>Worked example 3: a slightly trickier one — sad's Δz pattern</h3>
+
+<p>
+  Sofia's saddle mode has Δz ∝ x² − y² evaluated at each atomic position
+  (the inner-ring atoms are at canonical positions where this gives the
+  right alternating-pyrrole pattern). To find the irrep of the
+  <em>displacement field</em>, you need to combine two things:
+</p>
+
+<ul>
+  <li>The <strong>spatial</strong> pattern x² − y² as a function of
+      position (we just showed: <strong>B<sub>1g</sub></strong>);</li>
+  <li>The <strong>vector</strong> character of Δz itself — the
+      out-of-plane displacement transforms like the z-coordinate, which
+      we just showed is <strong>A<sub>2u</sub></strong>.</li>
+</ul>
+
+<p>
+  An OOP displacement field then transforms as the <em>direct product</em>
+  B<sub>1g</sub> ⊗ A<sub>2u</sub>. To compute the product irrep, multiply
+  the characters:
+</p>
+
+<pre><code>                    C4    C2'    i
+B1g (spatial)       −1    +1    +1
+A2u (vector z)      +1    −1    −1
+─────────────────  ────  ────  ────
+product             −1    −1    −1                       ⟹ B2u</code></pre>
+
+<p>
+  Looking up "−1, −1, −1" against the character table:
+  <strong>B<sub>2u</sub></strong> matches (and only B<sub>2u</sub>
+  matches). Therefore Sofia's <span class="irrep">sad</span> mode is
+  B<sub>2u</sub>. ✓
+</p>
+
+<p>
+  The same recipe assigns <span class="irrep">ruf</span> (Δz ∝ xy):
+  spatial pattern xy is B<sub>2g</sub> (you can verify: −1 under C<sub>4</sub>,
+  −1 under C<sub>2</sub>', +1 under i). Multiply by A<sub>2u</sub>:
+  (−1)(+1) = −1 under C<sub>4</sub>, (−1)(−1) = +1 under C<sub>2</sub>',
+  (+1)(−1) = −1 under i. That's B<sub>1u</sub>. ✓
+</p>
+
+<div class="callout">
+  <strong>Why does multiplying characters work?</strong> Because
+  characters are traces of representation matrices, and the matrix of a
+  direct-product representation is the
+  Kronecker product of the two factor matrices: tr(A⊗B) = tr(A)·tr(B).
+  So the characters of Γ<sub>1</sub> ⊗ Γ<sub>2</sub> are just the
+  pointwise product of the characters of Γ<sub>1</sub> and Γ<sub>2</sub>.
+  This is the single most useful identity in applied group theory —
+  it lets you compose irreps without ever writing down a matrix.
+</div>
+
+<h3>Reading any D<sub>4h</sub> label at a glance</h3>
+
+<p>
+  With the recipe in hand, every label in the D<sub>4h</sub> character
+  table decodes the same way. Here's a summary that lets you read any
+  irrep:
+</p>
+
+<table>
+<tr><th>Irrep</th><th>χ(C<sub>4</sub>)</th><th>χ(C<sub>2</sub>')</th><th>χ(i)</th><th>NSD relevance</th></tr>
+<tr><th>A<sub>1g</sub></th><td class="center">+1</td><td class="center">+1</td><td class="center">+1</td><td>bre (in-plane breathing)</td></tr>
+<tr><th>A<sub>2g</sub></th><td class="center">+1</td><td class="center">−1</td><td class="center">+1</td><td>rot (in-plane rotation of pyrroles)</td></tr>
+<tr><th>B<sub>1g</sub></th><td class="center">−1</td><td class="center">+1</td><td class="center">+1</td><td>N-str (in-plane N–N stretch)</td></tr>
+<tr><th>B<sub>2g</sub></th><td class="center">−1</td><td class="center">−1</td><td class="center">+1</td><td>m-str (in-plane meso–meso stretch)</td></tr>
+<tr><th>E<sub>g</sub></th><td class="center">0</td><td class="center">0</td><td class="center">+2</td><td>wav_x, wav_y (OOP waving pair)</td></tr>
+<tr><th>A<sub>1u</sub></th><td class="center">+1</td><td class="center">+1</td><td class="center">−1</td><td>pro (OOP propeller)</td></tr>
+<tr><th>A<sub>2u</sub></th><td class="center">+1</td><td class="center">−1</td><td class="center">−1</td><td>dom (OOP doming)</td></tr>
+<tr><th>B<sub>1u</sub></th><td class="center">−1</td><td class="center">+1</td><td class="center">−1</td><td>ruf (OOP ruffling)</td></tr>
+<tr><th>B<sub>2u</sub></th><td class="center">−1</td><td class="center">−1</td><td class="center">−1</td><td>sad (OOP saddling)</td></tr>
+<tr><th>E<sub>u</sub></th><td class="center">0</td><td class="center">0</td><td class="center">−2</td><td>trn_x, trn_y (in-plane translation pair)</td></tr>
+</table>
+
+<p>
+  Three columns determine the label uniquely: the C<sub>4</sub> column
+  picks A vs B (or zero for E), the C<sub>2</sub>' column picks the
+  numeric subscript, and the i column picks g vs u. That's the whole
+  encoding.
+</p>
+
+
+<h2 id="character-table">7. The D<sub>4h</sub> character table</h2>
+
+<p>
+  The character table is the compact summary of how each irrep transforms
+  under each class of operation. Each row is one irrep; each column is one
+  symmetry class. The entries are <em>characters</em> — the trace of the
+  representation matrix for that operation. Same trace in two different
+  bases means the same irrep behaviour; that's why characters are useful.
+</p>
+
+<table class="char-table">
+<tr>
+  <th>D<sub>4h</sub></th>
+  <th>E</th><th>2C<sub>4</sub></th><th>C<sub>2</sub></th><th>2C<sub>2</sub>'</th><th>2C<sub>2</sub>''</th>
+  <th>i</th><th>2S<sub>4</sub></th><th>σ<sub>h</sub></th><th>2σ<sub>v</sub></th><th>2σ<sub>d</sub></th>
+  <th class="basis">basis</th>
+</tr>
+<tr><th>A<sub>1g</sub></th><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td class="basis">x²+y², z²</td></tr>
+<tr><th>A<sub>2g</sub></th><td>1</td><td>1</td><td>1</td><td>−1</td><td>−1</td><td>1</td><td>1</td><td>1</td><td>−1</td><td>−1</td><td class="basis">R<sub>z</sub></td></tr>
+<tr><th>B<sub>1g</sub></th><td>1</td><td>−1</td><td>1</td><td>1</td><td>−1</td><td>1</td><td>−1</td><td>1</td><td>1</td><td>−1</td><td class="basis">x²−y²</td></tr>
+<tr><th>B<sub>2g</sub></th><td>1</td><td>−1</td><td>1</td><td>−1</td><td>1</td><td>1</td><td>−1</td><td>1</td><td>−1</td><td>1</td><td class="basis">xy</td></tr>
+<tr><th>E<sub>g</sub></th><td>2</td><td>0</td><td>−2</td><td>0</td><td>0</td><td>2</td><td>0</td><td>−2</td><td>0</td><td>0</td><td class="basis">(R<sub>x</sub>, R<sub>y</sub>); (xz, yz)</td></tr>
+<tr><th>A<sub>1u</sub></th><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>−1</td><td>−1</td><td>−1</td><td>−1</td><td>−1</td><td class="basis">—</td></tr>
+<tr><th>A<sub>2u</sub></th><td>1</td><td>1</td><td>1</td><td>−1</td><td>−1</td><td>−1</td><td>−1</td><td>−1</td><td>1</td><td>1</td><td class="basis">z</td></tr>
+<tr><th>B<sub>1u</sub></th><td>1</td><td>−1</td><td>1</td><td>1</td><td>−1</td><td>−1</td><td>1</td><td>−1</td><td>−1</td><td>1</td><td class="basis">—</td></tr>
+<tr><th>B<sub>2u</sub></th><td>1</td><td>−1</td><td>1</td><td>−1</td><td>1</td><td>−1</td><td>1</td><td>−1</td><td>1</td><td>−1</td><td class="basis">—</td></tr>
+<tr><th>E<sub>u</sub></th><td>2</td><td>0</td><td>−2</td><td>0</td><td>0</td><td>−2</td><td>0</td><td>2</td><td>0</td><td>0</td><td class="basis">(x, y)</td></tr>
+</table>
+
+<p>
+  Notes for reading this:
+</p>
+
+<ul>
+  <li>The <strong>first column</strong> (E, identity) is always equal to
+      the dimension of the irrep — 1 for A and B, 2 for E.</li>
+  <li>The <strong>"basis" column</strong> on the right shows simple
+      polynomial functions of (x, y, z) and the rotational vectors
+      (R<sub>x</sub>, R<sub>y</sub>, R<sub>z</sub>) that transform as
+      that irrep. These are gold for Sofia: they tell you what
+      <em>shape</em> a B<sub>1g</sub> distortion has (∝ x²−y²), what an
+      E<sub>u</sub> distortion looks like (∝ x or y), etc.</li>
+  <li>The <strong>g</strong> irreps have +1 under inversion; the
+      <strong>u</strong> irreps have −1. Within each parity, the four
+      1D irreps split by their behaviour under C<sub>4</sub> (A vs B)
+      and C<sub>2</sub>' (subscript 1 vs 2).</li>
+  <li>Empty cells in the basis column (A<sub>1u</sub>, B<sub>1u</sub>,
+      B<sub>2u</sub>) mean no simple linear / quadratic polynomial in
+      (x, y, z) transforms as that irrep — you need higher-order
+      polynomials. Sofia's analytic basis for those modes uses cubic
+      and quartic generators (e.g. Δz ∝ x·y·(x²−y²) for A<sub>1u</sub>).</li>
+</ul>
+
+<h3>Where do the characters come from?</h3>
+
+<p>
+  A character is a single number — the <em>trace</em> of the matrix that
+  represents an operation in some basis. Same number from any basis (that
+  represents the same irrep), which is why characters are useful: they're
+  invariants of the representation, not of the particular basis. Let's
+  compute the characters for a concrete representation and see what we
+  get.
+</p>
+
+<p>
+  Take the 4-N Δz basis from §5 (one Δz per N atom, with N atoms placed
+  on the ±x and ±y axes). For each symmetry operation, the trace =
+  <em>number of atoms that stay put, weighted by the sign the operation
+  imposes on Δz</em>. Why? Because if an atom moves to a different atom's
+  spot, that's an off-diagonal matrix entry, contributing zero to the
+  trace. Only atoms that stay put contribute — and they contribute +1 if
+  the operation preserves z, −1 if it flips z.
+</p>
+
+<p>
+  Going operation by operation:
+</p>
+
+<table>
+<tr><th>Operation</th><th>Atoms that stay put</th><th>Flips z?</th><th>χ contribution</th></tr>
+<tr><td><strong>E</strong></td><td>all 4</td><td>no</td><td>+4</td></tr>
+<tr><td><strong>C<sub>4</sub></strong> (90° about z)</td><td>none (cyclic permutation N1→N2→N3→N4)</td><td>no</td><td>0</td></tr>
+<tr><td><strong>C<sub>2</sub></strong> (180° about z)</td><td>none (N1↔N3, N2↔N4)</td><td>no</td><td>0</td></tr>
+<tr><td><strong>C<sub>2</sub>'</strong> (180° about x-axis)</td><td>N1, N3 (on the axis)</td><td>yes</td><td>2 atoms × (−1) = −2</td></tr>
+<tr><td><strong>C<sub>2</sub>''</strong> (180° about diagonal)</td><td>none (no N on the diagonals)</td><td>yes</td><td>0</td></tr>
+<tr><td><strong>i</strong> (inversion)</td><td>none (N1↔N3, N2↔N4)</td><td>yes</td><td>0</td></tr>
+<tr><td><strong>S<sub>4</sub></strong> (improper 90°)</td><td>none</td><td>yes</td><td>0</td></tr>
+<tr><td><strong>σ<sub>h</sub></strong> (macrocyclic plane)</td><td>all 4 (they're in the plane)</td><td>yes</td><td>4 × (−1) = −4</td></tr>
+<tr><td><strong>σ<sub>v</sub></strong> (xz plane)</td><td>N1, N3</td><td>no</td><td>+2</td></tr>
+<tr><td><strong>σ<sub>d</sub></strong> (diagonal mirror)</td><td>none</td><td>no</td><td>0</td></tr>
+</table>
+
+<p>
+  Reading down the right column, the character vector for the 4-N Δz
+  representation is:
+</p>
+
+<pre><code>             E   2C4   C2   2C2'   2C2''   i   2S4   σh   2σv   2σd
+χ(N4 Δz) =   4    0    0    -2      0      0    0   -4    2     0</code></pre>
+
+<p>
+  This 4-dimensional representation is reducible — its character vector
+  is none of the rows of the D<sub>4h</sub> character table. So which
+  irreps does it contain?
+</p>
+
+<h3>The reduction formula — characters do the bookkeeping</h3>
+
+<p>
+  Group theory gives an explicit formula. The number of times irrep Γ
+  appears in a reducible representation is:
+</p>
+
+<pre><code>           1
+n_Γ   =   ─── Σ  g(R) · χ(R) · χ_Γ(R)
+          |G|  R                                          (sum runs over symmetry classes)</code></pre>
+
+<p>
+  where |G| is the order of the group (16 for D<sub>4h</sub>), g(R) is
+  the number of operations in class R (e.g. 2 for the 2C<sub>4</sub>
+  class), χ(R) is the character of our reducible representation in that
+  class, and χ<sub>Γ</sub>(R) is the character of irrep Γ in that class
+  (read straight off the table). Multiply, sum, divide by 16, and you
+  get an integer multiplicity.
+</p>
+
+<p>
+  Let's apply it to find n<sub>A<sub>2u</sub></sub> for the 4-N Δz
+  representation. A<sub>2u</sub> characters are (1, 1, 1, −1, −1, −1, −1,
+  −1, 1, 1) reading the table row, and class sizes are
+  (1, 2, 1, 2, 2, 1, 2, 1, 2, 2):
+</p>
+
+<pre><code>           1
+n_A2u  =  ─── [ 1·(4)·(1)  +  2·(0)·(1)  +  1·(0)·(1)  +  2·(-2)·(-1)
+          16    + 2·(0)·(-1) + 1·(0)·(-1) + 2·(0)·(-1) + 1·(-4)·(-1)
+                + 2·(2)·(1)  + 2·(0)·(1) ]
+
+                1
+          =   ─── [ 4 + 0 + 0 + 4 + 0 + 0 + 0 + 4 + 4 + 0 ]
+              16
+
+                16
+          =   ───  =  1                                    ⟹ A2u appears once</code></pre>
+
+<p>
+  Doing the same arithmetic for every other irrep:
+</p>
+
+<table>
+<tr><th>Irrep Γ</th><th>Σ g(R) · χ(R) · χ<sub>Γ</sub>(R)</th><th>n<sub>Γ</sub></th></tr>
+<tr><td>A<sub>1g</sub></td><td>4 + 0 + 0 − 4 + 0 + 0 + 0 − 4 + 4 + 0 = 0</td><td class="center">0</td></tr>
+<tr><td>A<sub>2g</sub></td><td>4 + 0 + 0 + 4 + 0 + 0 + 0 − 4 − 4 + 0 = 0</td><td class="center">0</td></tr>
+<tr><td>B<sub>1g</sub></td><td>4 + 0 + 0 − 4 + 0 + 0 + 0 − 4 + 4 + 0 = 0</td><td class="center">0</td></tr>
+<tr><td>B<sub>2g</sub></td><td>4 + 0 + 0 + 4 + 0 + 0 + 0 − 4 − 4 + 0 = 0</td><td class="center">0</td></tr>
+<tr><td>E<sub>g</sub></td><td>8 + 0 + 0 + 0 + 0 + 0 + 0 + 8 + 0 + 0 = 16</td><td class="center"><strong>1</strong></td></tr>
+<tr><td>A<sub>1u</sub></td><td>4 + 0 + 0 − 4 + 0 + 0 + 0 + 4 − 4 + 0 = 0</td><td class="center">0</td></tr>
+<tr><td>A<sub>2u</sub></td><td>4 + 0 + 0 + 4 + 0 + 0 + 0 + 4 + 4 + 0 = 16</td><td class="center"><strong>1</strong></td></tr>
+<tr><td>B<sub>1u</sub></td><td>4 + 0 + 0 − 4 + 0 + 0 + 0 + 4 − 4 + 0 = 0</td><td class="center">0</td></tr>
+<tr><td>B<sub>2u</sub></td><td>4 + 0 + 0 + 4 + 0 + 0 + 0 + 4 + 4 + 0 = 16</td><td class="center"><strong>1</strong></td></tr>
+<tr><td>E<sub>u</sub></td><td>8 + 0 + 0 + 0 + 0 + 0 + 0 − 8 + 0 + 0 = 0</td><td class="center">0</td></tr>
+</table>
+
+<p>
+  So the 4-dimensional N-Δz representation decomposes as:
+</p>
+
+<pre><code>Γ(N4 Δz)  =  A2u  ⊕  B2u  ⊕  Eg</code></pre>
+
+<p>
+  Dimension check: dim(A<sub>2u</sub>) + dim(B<sub>2u</sub>) + dim(E<sub>g</sub>)
+  = 1 + 1 + 2 = 4 ✓.
+</p>
+
+<h3>Connecting back to §5</h3>
+
+<p>
+  In §5 we did this same decomposition the long way: change basis to
+  (f<sub>A</sub>, f<sub>B</sub>, f<sub>E1</sub>, f<sub>E2</sub>) and watch
+  the C<sub>4</sub> matrix become block-diagonal. We got 1 A-block,
+  1 B-block, and one 2D E-block. With only the C<sub>4</sub> data we
+  couldn't tell A<sub>1g</sub> from A<sub>2u</sub> or B<sub>1u</sub> from
+  B<sub>2u</sub> — those distinctions need the C<sub>2</sub>' and i
+  characters too.
+</p>
+
+<p>
+  Now we have the answer: the A block is A<sub>2u</sub> (so f<sub>A</sub>
+  flips sign under C<sub>2</sub>' and under inversion — and indeed
+  f<sub>A</sub> = ½(e<sub>1</sub>+e<sub>2</sub>+e<sub>3</sub>+e<sub>4</sub>)
+  does: the operation flips z so each Δz changes sign). The B block is
+  B<sub>2u</sub>. The E block is E<sub>g</sub>. <em>Same decomposition,
+  just with the full Mulliken labels filled in.</em>
+</p>
+
+<div class="callout">
+  <strong>Why is this powerful?</strong> We just found which irreps a
+  4D representation contains <em>without writing down a single matrix
+  except for counting fixed atoms</em>. For the 24-atom porphyrin Δz
+  basis (a 24×24 representation), the character calculation goes the
+  same way — count fixed atoms per operation, multiply by sign — and
+  the reduction formula reads off how many of each irrep are present.
+  This is exactly the bookkeeping behind Sofia's claim that the OOP
+  displacement space decomposes into one A<sub>2u</sub> (dom), one
+  B<sub>1u</sub> (ruf), one B<sub>2u</sub> (sad), one A<sub>1u</sub>
+  (pro), one E<sub>g</sub> pair (wav<sub>x</sub>, wav<sub>y</sub>),
+  plus higher-frequency representatives that show up as residual.
+  Group theory lets you predict, before any DFT, which distortions
+  are physically allowed; Sofia's job is to measure their amplitudes.
+</div>
+
+
+<h2 id="basis-functions">8. Basis functions and polynomial generators</h2>
+
+<p>
+  §7 told us <em>which</em> irreps appear in the 4-N Δz space:
+  A<sub>2u</sub>, B<sub>2u</sub>, and one E<sub>g</sub> pair. But it
+  didn't tell us what those basis vectors <em>look like</em>. To
+  finish the job, we need a concrete recipe for going from an irrep
+  label to a numerical pattern of displacements at the atomic
+  positions. That recipe is: <em>pick a polynomial that transforms as
+  the irrep, and evaluate it at each atom's (x, y, z) coordinates</em>.
+</p>
+
+<p>
+  The "basis" column of the character table is exactly the source for
+  these polynomials. Every entry there is a polynomial known to
+  transform as the labelled irrep — a polynomial generator.
+</p>
+
+<h3>From character-table polynomial to Δz pattern</h3>
+
+<p>
+  One subtlety: the character-table basis column lists polynomials in
+  (x, y, z) that transform as <em>scalar</em> functions. For NSD's OOP
+  modes, what we want is a Δz pattern — a number assigned to each atom
+  in the macrocyclic plane that says how far it sticks up. As we saw
+  in §6, a Δz field at position (x, y, 0) transforms as
+  (spatial pattern) ⊗ (z's vector character) = (spatial pattern) ⊗
+  A<sub>2u</sub>. So to get a Δz pattern of irrep Γ, we need a spatial
+  polynomial of irrep Γ ⊗ A<sub>2u</sub> (since A<sub>2u</sub> ⊗
+  A<sub>2u</sub> = A<sub>1g</sub>, multiplying by A<sub>2u</sub>
+  inverts the parity).
+</p>
+
+<p>
+  Practically this means: for an OOP mode of irrep
+  <strong>Γ<sub>u</sub></strong> (one of A<sub>1u</sub>, A<sub>2u</sub>,
+  B<sub>1u</sub>, B<sub>2u</sub>, E<sub>u</sub>), the Δz polynomial is
+  the basis function of Γ<sub>u</sub> ⊗ A<sub>2u</sub> = the
+  <em>g</em>-partner of Γ<sub>u</sub>:
+</p>
+
+<pre><code>OOP mode irrep        spatial polynomial (the g-partner)
+─────────────────     ─────────────────────────────────
+A2u (dom)         ←   A1g basis function:  r²       (1, scalar 1 vanishes if used as Δz, so step up)
+B1u (ruf)         ←   B2g basis function:  xy
+B2u (sad)         ←   B1g basis function:  x² − y²
+A1u (pro)         ←   A2g basis function:  needs higher order — see below
+Eg (wav)          ←   step up from (xz, yz) basis to (x·r², y·r²)</code></pre>
+
+<p>
+  The pairing makes the table at the start of this section less
+  mysterious. Note that this is the same trick we used in §6 worked
+  example 3 to derive that "Δz ∝ x²−y² is B<sub>2u</sub>" — only
+  applied in reverse: <em>given</em> the irrep, find the polynomial.
+</p>
+
+<h3>Worked example 1: A<sub>2u</sub> (dom) at the 4 N positions</h3>
+
+<p>
+  We want the dom basis vector — the actual numerical Δz pattern
+  Sofia uses for the A<sub>2u</sub> projection. Spatial polynomial:
+  r² = x² + y². Evaluate at each N atom (positions (a, 0), (0, a),
+  (−a, 0), (0, −a)):
+</p>
+
+<pre><code>N1 at (a, 0)   :  r² = a² + 0  = a²
+N2 at (0, a)   :  r² = 0  + a² = a²
+N3 at (-a, 0)  :  r² = a² + 0  = a²
+N4 at (0, -a)  :  r² = 0  + a² = a²
+
+basis vector  =  (a², a², a², a²)   (all four equal — uniform doming)</code></pre>
+
+<p>
+  Compare this to the f<sub>A</sub> direction we found in §5:
+  ½(e<sub>1</sub> + e<sub>2</sub> + e<sub>3</sub> + e<sub>4</sub>) — all
+  four atoms with equal Δz. <em>The polynomial-evaluation recipe gives
+  exactly the same vector</em> (up to overall normalisation). ✓
+</p>
+
+<div class="callout">
+  <strong>Why r² and not just z?</strong> The character table lists "z"
+  as the A<sub>2u</sub> basis function, but at every atomic position on
+  the macrocyclic plane z = 0 — the basis vector would be all zeros.
+  We step up to the next-lowest-order A<sub>2u</sub> polynomial that
+  doesn't trivially vanish. The constant function is also A<sub>2u</sub>
+  when used as a Δz pattern, but it represents a rigid-body translation
+  along z (Tz), not a real distortion. So we project it out and use r²,
+  which is the lowest-order non-trivial dom pattern.
+</div>
+
+<h3>Worked example 2: B<sub>2u</sub> (sad) at the 4 N positions</h3>
+
+<p>
+  Spatial polynomial: x² − y² (we derived this is B<sub>1g</sub>, and
+  B<sub>1g</sub> ⊗ A<sub>2u</sub> = B<sub>2u</sub>). Evaluate:
+</p>
+
+<pre><code>N1 at (a, 0)   :  a² - 0  = +a²
+N2 at (0, a)   :  0 - a²  = −a²
+N3 at (-a, 0)  :  a² - 0  = +a²
+N4 at (0, -a)  :  0 - a²  = −a²
+
+basis vector  =  (+a², −a², +a², −a²)   (alternating up / down / up / down)</code></pre>
+
+<p>
+  This is the f<sub>B</sub> direction from §5,
+  ½(e<sub>1</sub> − e<sub>2</sub> + e<sub>3</sub> − e<sub>4</sub>),
+  again up to normalisation. ✓ Pyrroles at the +x and −x positions go
+  up while pyrroles at +y and −y go down — the saddle.
+</p>
+
+<h3>Worked example 3: E<sub>g</sub> (wav) at the 4 N positions</h3>
+
+<p>
+  Spatial polynomials for the E<sub>g</sub> pair: x·r² and y·r²
+  (stepping up from (xz, yz), which vanishes on z = 0). Evaluate
+  wav<sub>x</sub> = x·r² first:
+</p>
+
+<pre><code>N1 at (a, 0)   :  a · a² = +a³
+N2 at (0, a)   :  0 · a² = 0
+N3 at (-a, 0)  :  -a · a² = −a³
+N4 at (0, -a)  :  0 · a² = 0
+
+wav_x basis vector =  (+a³, 0, −a³, 0)   (one wave along the x-axis only)</code></pre>
+
+<p>
+  And wav<sub>y</sub> = y·r²:
+</p>
+
+<pre><code>N1 at (a, 0)   :  0
+N2 at (0, a)   :  +a³
+N3 at (-a, 0)  :  0
+N4 at (0, -a)  :  −a³
+
+wav_y basis vector =  (0, +a³, 0, −a³)   (one wave along the y-axis only)</code></pre>
+
+<p>
+  These two vectors are orthogonal (their dot product is 0), and they
+  span the same 2D plane as f<sub>E1</sub> = (1/√2)(e<sub>1</sub> −
+  e<sub>3</sub>) and f<sub>E2</sub> = (1/√2)(e<sub>2</sub> −
+  e<sub>4</sub>) from §5. ✓ The polynomial recipe and the explicit
+  block-diagonalisation agree, as they must.
+</p>
+
+<h3>The full Sofia basis (24 atoms, 6 OOP modes)</h3>
+
+<p>
+  Scaling the recipe to Sofia's actual implementation is just
+  bookkeeping. The 24 inner-ring atoms (4 N + 8 Cα + 4 Cmeso + 8 Cβ)
+  sit at canonical positions in the (x, y) plane, and Sofia evaluates
+  each of the 6 OOP polynomials at all 24 positions:
+</p>
+
+<table>
+<tr><th>NSD mode</th><th>Irrep</th><th>Polynomial Sofia evaluates</th><th>Origin</th></tr>
+<tr><td><span class="irrep">dom</span></td><td>A<sub>2u</sub></td><td>r² (= x² + y²)</td><td>r² is A<sub>1g</sub>; ⊗ A<sub>2u</sub> = A<sub>2u</sub>. Tz projected out.</td></tr>
+<tr><td><span class="irrep">ruf</span></td><td>B<sub>1u</sub></td><td>x · y</td><td>xy is B<sub>2g</sub>; ⊗ A<sub>2u</sub> = B<sub>1u</sub></td></tr>
+<tr><td><span class="irrep">sad</span></td><td>B<sub>2u</sub></td><td>x² − y²</td><td>x²−y² is B<sub>1g</sub>; ⊗ A<sub>2u</sub> = B<sub>2u</sub></td></tr>
+<tr><td><span class="irrep">wav<sub>x</sub></span></td><td>E<sub>g</sub></td><td>x · r²</td><td>(xz, yz) is E<sub>g</sub>; step up. Ry projected out.</td></tr>
+<tr><td><span class="irrep">wav<sub>y</sub></span></td><td>E<sub>g</sub></td><td>y · r²</td><td>same; Rx projected out, then orthogonalised vs wav<sub>x</sub>.</td></tr>
+<tr><td><span class="irrep">pro</span></td><td>A<sub>1u</sub></td><td>x · y · (x² − y²)</td><td>xy(x²−y²) is A<sub>2g</sub>; ⊗ A<sub>2u</sub> = A<sub>1u</sub></td></tr>
+</table>
+
+<p>
+  Each polynomial gets evaluated at 24 atom positions, giving a
+  24-dimensional vector. Sofia normalises and projects out rigid-body
+  modes (Tz for dom, R<sub>x</sub> / R<sub>y</sub> for the wav pair).
+  The result: six orthonormal 24-D basis vectors, one per OOP mode.
+  An identical procedure produces the six IP basis vectors.
+</p>
+
+<p>
+  Projecting an observed Δz vector onto each basis vector takes a
+  single dot product per mode — that's the entire NSD inner loop. Once
+  you have the basis, computing Sofia's signed amplitudes is faster
+  than any single Gaussian SCF step.
+</p>
+
+<h3>Why "analytic" matters</h3>
+
+<p>
+  Sofia's basis is called <em>analytic</em> because it comes from
+  polynomial group theory rather than from a DFT frequency calculation.
+  The same six polynomials apply to <em>any</em> tetrapyrrole geometry
+  on the same atom topology — different metal, different spin state,
+  different axial ligand, even a non-D<sub>4h</sub> distorted molecule
+  — without re-running anything. You evaluate at the atomic positions
+  of the new geometry and project. That's it.
+</p>
+
+<p>
+  Frequency-derived bases (Sofia's <code>corrin-freq</code> /
+  Variant iii option) are more rigorous when symmetry is genuinely
+  broken: they're the actual Hessian eigenvectors of the specific
+  molecule, so the irrep labels mean exactly what the table says they
+  mean. The analytic basis is faster, more general, and clean enough
+  to be interpretable mode-by-mode — but it's a deliberate choice of
+  basis, not the unique correct one.
+</p>
+
+
+<h2 id="bridge">9. From group theory to NSD</h2>
+
+<p>
+  We now have all the pieces. Let's stitch them together into the chain
+  of reasoning that turns "this is a deformed tetrapyrrole" into Sofia's
+  signed amplitudes.
+</p>
+
+<h3>The chain — and where each piece came from</h3>
+
+<ol>
+  <li>
+    <strong>Classify by symmetry.</strong> The idealised flat
+    metalloporphyrin has D<sub>4h</sub> symmetry (§3). Any displacement
+    of the inner-ring atoms can be sorted into the 10 D<sub>4h</sub>
+    irreps (§5–§7). For the OOP channel — Δz at each of the 24
+    inner-ring atoms — each atom orbit (4 N's, 8 Cα's, 4 Cmeso's,
+    8 Cβ's) contributes its own decomposition (§7's worked example
+    handled the N orbit alone). Adding them up, the full 24-D OOP
+    space contains representatives of five irreps:
+    <pre><code>OOP irreps that appear:   A2u (dom)    B1u (ruf)    B2u (sad)
+                          A1u (pro)    Eg  (wav pair)</code></pre>
+    Each appears with some multiplicity ≥ 1 — different atom orbits
+    can each contribute an A<sub>2u</sub>-component, an
+    E<sub>g</sub>-component, and so on. Sofia picks the
+    <em>lowest-frequency representative</em> of each irrep (the one
+    coming from the lowest-order polynomial generator); the
+    higher-frequency representatives in the same irreps become the
+    residual.
+  </li>
+  <li>
+    <strong>Build the basis vector for each irrep.</strong> For each
+    minimal-basis irrep, pick the lowest-order polynomial that
+    transforms that way (§8), evaluate it at the canonical positions
+    of the 24 inner-ring atoms, and you get a 24-D vector — the
+    minimal-basis mode for that irrep. The recipe via direct product
+    (§6, §8): a Δz pattern of irrep Γ<sub>u</sub> uses the basis function
+    of Γ<sub>u</sub> ⊗ A<sub>2u</sub> as its spatial polynomial. So
+    <span class="irrep">sad</span> uses x² − y², <span class="irrep">ruf</span>
+    uses xy, <span class="irrep">dom</span> uses r², and so on.
+  </li>
+  <li>
+    <strong>Project the observation.</strong> Given a real molecule's
+    Δz vector (24 numbers, one per inner-ring atom), Sofia computes the
+    projection onto each minimal-basis vector by a single dot product:
+    <pre><code>d_Γ  =  ⟨ B_Γ , Δz_observed ⟩          (one signed amplitude per irrep)</code></pre>
+    These signed amplitudes — d<sub>sad</sub>, d<sub>ruf</sub>,
+    d<sub>dom</sub>, d<sub>wav_x</sub>, d<sub>wav_y</sub>,
+    d<sub>pro</sub> — are Sofia's headline output. Same procedure
+    for the IP channel gives d<sub>bre</sub>, d<sub>N-str</sub>,
+    d<sub>m-str</sub>, d<sub>rot</sub>, d<sub>trn_x</sub>,
+    d<sub>trn_y</sub>.
+  </li>
+  <li>
+    <strong>Read off the residual.</strong> The minimal basis spans
+    only six dimensions out of the 72-D OOP+IP space. Whatever's left
+    after subtracting Σ d<sub>Γ</sub> · B<sub>Γ</sub> from the observed
+    distortion is the residual — Sofia's "unexplained fraction".
+    Group theory tells us where it lives: in the higher-frequency
+    representatives of the same irreps. So the residual isn't a
+    different <em>kind</em> of distortion; it's higher-order radial
+    structure within the same symmetry channels.
+  </li>
+</ol>
+
+<div class="callout">
+  <strong>Why "lowest-order" polynomial?</strong> Within a single irrep
+  there are infinitely many possible distortion patterns (lowest-order
+  polynomial, next-lowest, …); they all transform the same way under
+  the group, but their <em>radial profiles</em> differ. The
+  lowest-frequency normal mode of an idealised D<sub>4h</sub>
+  tetrapyrrole in that irrep is dominated by the lowest-order
+  polynomial generator — that's why Sofia uses it. Higher-order
+  patterns in the same irrep are higher in frequency, contribute less
+  to typical chemistry, and get lumped into the residual.
+</div>
+
+<h3>NSD as linear algebra with a group-theoretic twist</h3>
+
+<p>
+  Strip away the chemistry and what remains is high-school linear
+  algebra: take a vector (the observed displacement), pick a basis
+  (six minimal-basis modes), project (one dot product per mode). What
+  group theory contributes is the <em>choice</em> of basis. We didn't
+  pick six modes by intuition or by fitting to data — we picked them
+  because the irreducible representations of D<sub>4h</sub> told us
+  which six basis directions are forced by the symmetry of an
+  idealised tetrapyrrole.
+</p>
+
+<p>
+  This is the same payoff as in MO theory: the SALC analogy at the
+  start of <a href="Sofia_lesson.html#what-is-nsd">the main Sofia lesson</a>
+  was not a coincidence. Both NSD and SALC-based MO theory take a
+  high-dimensional object (a displacement field, an electronic
+  wavefunction) and decompose it onto a basis whose components are
+  labelled by the irreps of the molecule's point group. The
+  coefficients in the decomposition are the chemistry; the residual
+  is the diagnostic.
+</p>
+
+<p>
+  Group theory makes the classification rigorous. The polynomial
+  generators make the basis concrete. Sofia just does the dot products
+  and prints them out.
+</p>
+
+
+<h2 id="further">10. Further reading</h2>
+
+<ul>
+  <li>
+    <strong>Cotton, F. A.</strong> <em>Chemical Applications of Group Theory</em>,
+    3rd ed.; Wiley, 1990. The standard chemistry-oriented introduction;
+    full character tables, worked examples on point group assignment, and
+    the projection-operator method.
+  </li>
+  <li>
+    <strong>Atkins, P.; Friedman, R.</strong> <em>Molecular Quantum Mechanics</em>
+    (any edition). A more compact treatment in the chapter on symmetry —
+    suitable as a refresher for someone who's done group theory before.
+  </li>
+  <li>
+    <strong>The original NSD paper</strong> — Jentzen, W.; Song, X.-Z.;
+    Shelnutt, J. A. <em>J. Phys. Chem. B</em> <strong>1997</strong>,
+    <em>101</em>, 1684–1699. Group-theoretic construction of the porphyrin
+    minimal basis from first principles.
+  </li>
+  <li>
+    <strong>Bishop, D. M.</strong> <em>Group Theory and Chemistry</em>;
+    Dover, 1993. A reasonably-priced reference that covers the full
+    machinery — projection operators, direct products, descent in
+    symmetry — without assuming a strong mathematical background.
+  </li>
+</ul>
+
+
+<div class="next-up">
+  <strong>Ready?</strong> Now read the
+  <a href="Sofia_lesson.html">main Sofia lesson</a> — every irrep label there
+  should now decode for you, and the SALC analogy in §1 will land where
+  it's supposed to.
+</div>
+
+
+<footer>
+  <p>
+    Part of the Sofia documentation. Group theory primer for chemistry
+    readers approaching NSD for the first time.
+  </p>
+  <p>
+    MIT licensed. Copyright © 2026 Adrian M.V. Brânzanic, Radu Onija,
+    Sergiu-Raul Cosma, Radu Silaghi-Dumitrescu.
+  </p>
+</footer>
+
+</main>
+</body>
+</html>
