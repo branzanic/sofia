@@ -1,10 +1,11 @@
 # Sofia
 
-**Sofia** is a Normal-coordinate Structural Decomposition (NSD) program for
-metalloporphyrin / metallocorrin / metallocorphin macrocycles, with support
-for ORCA QM/MM output. It analyses geometric distortions of tetrapyrrole
-cofactors from Gaussian opt logs and writes per-file reports, CSV summaries,
-and PNG figures.
+**Sofia** is a Normal-coordinate Structural Decomposition (NSD) program
+for metalloporphyrin / metallocorrin / metallocorphin macrocycles. It
+reads **Gaussian opt logs** out of the box (and ORCA QM/MM output for
+F430-in-MCR geometries), analyses the geometric distortion of the
+tetrapyrrole cofactor, and writes per-file reports, CSV summaries, and
+PNG figures.
 
 The name nods to the **dome** — both Hagia Sofia's, and the *dom* (A2u)
 mode of the NSD minimal basis.
