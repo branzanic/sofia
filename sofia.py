@@ -48,8 +48,17 @@ Examples:
     sofia.py viz       --type corphin             # corphin / F430 viz with peripheral shell
     sofia.py viz       --amp 1.0 --render         # build viz + PNG previews via headless PyMOL
 
-For theory and implementation details see Manual.md.
-For a quick reference and worked examples see README.md.
+Documentation:
+    docs/Sofia_lesson.html         — guided tutorial: what NSD is, what Sofia
+                                     decomposes, how to read the output, and
+                                     a SALC-analogy bridge for chemists.
+    docs/group_theory_lesson.html  — prerequisite primer on D4h symmetry,
+                                     irreducible representations, character
+                                     reduction, and basis construction (with
+                                     fully worked examples). Read this first
+                                     if A1g / B2u / Eg feel like hieroglyphics.
+    Manual.md                      — theory + implementation reference.
+    README.md                      — quick reference and worked CLI examples.
 """
 
 import argparse

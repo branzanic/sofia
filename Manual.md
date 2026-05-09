@@ -6,6 +6,19 @@ Companion to **[README.md](README.md)** (quickstart).
 The CLI entry point is **`sofia.py`**; underneath it dispatches to the
 single-purpose analysis modules described in §9.
 
+> **For a guided introduction, start with the lessons** instead of this manual:
+>
+> - **[docs/Sofia_lesson.html](docs/Sofia_lesson.html)** — what NSD is, what
+>   Sofia decomposes, how to read the output, with the porphyrin / corrin /
+>   corphin viz grids embedded as figures.
+> - **[docs/group_theory_lesson.html](docs/group_theory_lesson.html)** —
+>   prerequisite primer on D<sub>4h</sub> symmetry, irreducible representations,
+>   character reduction, and basis construction, with fully worked examples
+>   that stand alone if you have never done group theory before.
+>
+> This manual is the deeper reference: theory, basis-construction details,
+> validation strategy, and per-script implementation notes.
+
 ---
 
 ## Table of contents
