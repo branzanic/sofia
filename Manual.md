@@ -578,3 +578,16 @@ Without `--quiet`, each per-file analysis prints a multi-section report:
    *Rationales for the choice of metals for super-reduced biological metal
    centers: cobalt in cobalamin vs. nickel in F430.* — The first manuscript
    using Sofia.
+
+---
+
+## Acknowledgments
+
+Sofia and this manual were built collaboratively by **Adrian M.V.
+Brânzanic** and **Claude** (Anthropic) across many sessions of iterative
+refinement. The chemistry knowledge, manuscript context, scoping
+judgment, and decisions about what to include came from Adrian; the
+code as it stands — the analytic D<sub>4h</sub>-pattern minimal basis,
+the graph-walking macrocycle identifier, the per-class analysis
+pipelines, the visualization generators, and this implementation
+reference — was drafted and revised in dialogue.

@@ -281,3 +281,15 @@ Brânzanic / Silaghi-Dumitrescu manuscript and the Jentzen–Song–Shelnutt
 > of Synthetic and Protein-Bound Porphyrins in Terms of the
 > Lowest-Frequency Normal Coordinates of the Macrocycle.*
 > J. Phys. Chem. B **1997**, *101*, 1684–1699.
+
+---
+
+## Acknowledgments
+
+Sofia, the lessons, and this documentation were built collaboratively by
+**Adrian M.V. Brânzanic** and **Claude** (Anthropic), through many
+sessions of iterative refinement. The chemistry, the manuscript context,
+and the judgment about scope came from Adrian; the code as it stands —
+the analytic basis machinery, the macrocycle identifier, the
+visualization pipeline, the HTML lessons — was drafted and revised in
+dialogue.
